@@ -15,14 +15,20 @@ class LosingBoard:
 	"""
 
 	def __init__(self, no_kings=False):
-		self.board = chess.Board()
+		k=1
+		self.no_kings = no_kings
+		if self.no_kings:
+			self.board = chess.Board(fen='rnbq1bnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQ1BNR w Qq - 0 1')
+			k=0
+		else:
+			self.board = chess.Board()
 
 		self.piece_counts = { color: { 	
 										chess.PAWN: 8,
 										chess.ROOK: 2,
 										chess.BISHOP: 2,
 										chess.QUEEN: 1,
-										chess.KING: 1,
+										chess.KING: k,
 										chess.KNIGHT: 2,
 									}
 
@@ -93,11 +99,11 @@ class LosingBoard:
 		"""
 		Return true if there are only kings left.
 		"""
-
-		for color in [chess.WHITE, chess.BLACK]:
-			if not sum(self.piece_counts[color].values()) == 1 and self.piece_counts[color][chess.KING] == 1:
-				return False
-
+		if not self.no_kings:
+			for color in [chess.WHITE, chess.BLACK]:
+				if not sum(self.piece_counts[color].values()) == 1 and self.piece_counts[color][chess.KING] == 1:
+					return False
+					
 		return True
 
 
