@@ -30,6 +30,10 @@ class AlphaBetaAgent(Agent):
 
 		moves = gameState.getLegalMoves()
 
+		if len(moves) == 0:
+			return "FAIL!!!"
+
+
 		p = .1		# with probability p, choose random action
 		if random.uniform(0,1) < p:
 			return random.sample(moves, 1)[0]
@@ -38,13 +42,13 @@ class AlphaBetaAgent(Agent):
 		alpha = -99999
 		for move in moves:
 			values[move] = self._alpha_beta_value(move, gameState, -99999, 99999, 0, self.color)
+			print values[move]
 			alpha = max(alpha, values[move])
+			break
 
 		# return action with max utility
-		try:
-			return max(values, key=lambda v: v[1])[0]	
-		except:
-			print moves, values
+		return max(values, key=values.get)	
+
 
 
 	def _alpha_beta_value(self, move, gameState, alpha, beta, depth, color):
