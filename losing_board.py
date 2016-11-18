@@ -1,6 +1,7 @@
 import chess
+from copy import deepcopy
 
-class losingBoard():
+class LosingBoard:
 	"""
 	Wrapper for the python-chess Board class that encodes the rules of losing chess 
 	(a.k.a. anti-chess, suicide chess). 
@@ -13,8 +14,9 @@ class losingBoard():
 	-> Pawns are automatically promoted to Queens.
 	"""
 
-	def __init__(self):
+	def __init__(self, no_kings=False):
 		self.board = chess.Board()
+
 		self.piece_counts = { color: { 	
 										chess.PAWN: 8,
 										chess.ROOK: 2,
@@ -45,7 +47,7 @@ class losingBoard():
 		for mv in chess_legal_moves:
 			if self.board.piece_at(mv.to_square):
 				legal_moves.append(mv)
-				attacking == True
+				attacking = True
 
 		if attacking:
 			return legal_moves
@@ -53,11 +55,12 @@ class losingBoard():
 			return list(chess_legal_moves)
 
 
-	def move(self, mv, agent=None):
+	def move(self, mv):
 		"""
-		Push move mv to gamestate.
+		Push move mv to true board.
 		"""
-		p = self.board.piece_at([])
+
+		p = self.board.piece_at(mv.to_square)
 
 		# decrement count of pieces if one is captured
 		if p:
@@ -67,15 +70,36 @@ class losingBoard():
 		self.board.push(mv)
 
 
+	def generateSuccessor(self, mv):
+		"""
+		Generate successor board given move mv without modifying the true board.
+		"""
+		new_board = deepcopy(self)
+		new_board.move(mv)
+		return new_board
+
+
 	def isGameOver(self):
 		"""	
 		Return true if all of one player's pieces have been consumed.
 		"""
+
 		for k in self.piece_counts:
 			if sum(self.piece_counts[k].values()) == 0:
 				return True
-
 		return False
+
+	def isDraw(self):
+		"""
+		Return true if there are only kings left.
+		"""
+
+		for color in [chess.WHITE, chess.BLACK]:
+			if not sum(self.piece_counts[color].values()) == 1 and self.piece_counts[color][chess.KING] == 1:
+				return False
+
+		return True
+
 
 	def __str__(self):
 
