@@ -12,12 +12,12 @@ naive_weights = {chess.PAWN: 1,
 				 chess.ROOK: 3,
 				 chess.QUEEN: 4}
 
-WEIGHTS_SUM = sum(naive_weights.values())
+WEIGHTS_SUM = 33
 
 
 def weighted_piece_count(game_state, color):
 	
-	pieces = game_state.piece_counts[color]
+	pieces = game_state.piece_counts[not color]
 
 	tot = WEIGHTS_SUM
 	for k in pieces:

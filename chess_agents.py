@@ -9,29 +9,30 @@ class Agent:
 		self.eval_func = eval_func
 		self.depth = int(depth)
 
-	def getMove(self, gameState):
+	def get_move(self, game_state):
 		raise Exception("Undefined!")
 
 
 class RandomAgent(Agent):
-	def getMove(self, gameState):
-		moves = gameState.getLegalMoves()
+	def get_move(self, game_state):
+		moves = game_state.get_legal_moves()
 		move = random.sample(moves, 1)[0]
 		return move
 
 
 ############### DOES NOT WORK AND IS UGLY! ####################
+
 class AlphaBetaAgent(Agent):
 
-	def getMove(self, gameState):
+	def get_move(self, game_state):
 		"""
 		Return minimax move using self.depth, self.eval_func, and alpha-beta pruning.
 		"""
 
-		moves = gameState.getLegalMoves()
+		moves = game_state.get_legal_moves()
 
 		if len(moves) == 0:
-			return "FAIL!!!"
+			return list(game_state.board.legal_moves)
 
 
 		p = .1		# with probability p, choose random action
@@ -41,36 +42,34 @@ class AlphaBetaAgent(Agent):
 		values = {}
 		alpha = -99999
 		for move in moves:
-			values[move] = self._alpha_beta_value(move, gameState, -99999, 99999, 0, self.color)
-			print values[move]
+			values[move] = self._alpha_beta_value(move, game_state, -99999, 99999, 0, self.color)
 			alpha = max(alpha, values[move])
-			break
 
 		# return action with max utility
 		return max(values, key=values.get)	
 
 
 
-	def _alpha_beta_value(self, move, gameState, alpha, beta, depth, color):
+	def _alpha_beta_value(self, move, game_state, alpha, beta, depth, color):
 		"""
 		Helper function for performing alpha-beta pruning.
 		"""
 		# has max depth been reached?
 		if depth == self.depth:
-			return self.eval_func(gameState, color)
+			return self.eval_func(game_state, color)
 
 		# get next game state
-		nextState = gameState.generateSuccessor(move)
+		next_state = game_state.generate_successor(move)
 
 		# has agent won?
-		if nextState.isGameOver():
+		if next_state.is_game_over():
 			return 99999
 
 		# does agent move next?
 		next_color = not color
 
 		# get information about next state
-		nextMoves = nextState.getLegalMoves()
+		next_moves = next_state.get_legal_moves()
 
 		# if this agent is to move
 		if next_color == self.color:
@@ -80,15 +79,15 @@ class AlphaBetaAgent(Agent):
 
 			# if we've reached a terminal state
 			# update alpha and return terminal value
-			if nextMoves == []:
-				termVal = self.eval_func(nextState, next_color)
-				alpha = max(alpha, termVal)
-				return termVal
+			if next_moves == []:
+				term_val = self.eval_func(next_state, next_color)
+				alpha = max(alpha, term_val)
+				return term_val
 
 			# find next action with max utility
 			v = -99999
-			for mv in nextMoves:
-				mvValue = self._alpha_beta_value(mv, nextState, alpha, beta, depth, next_color)
+			for mv in next_moves:
+				mvValue = self._alpha_beta_value(mv, next_state, alpha, beta, depth, next_color)
 				v = max(v, mvValue)
 				# prune if value is great enough
 			if v > beta:
@@ -100,14 +99,14 @@ class AlphaBetaAgent(Agent):
 		else:
 			# if we've reached a terminal state
 			# return terminal value without updating alpha/beta
-			if nextMoves == []:
-				termVal = self.eval_func(nextState, next_color)
-				return termVal
+			if next_moves == []:
+				term_val = self.eval_func(next_state, next_color)
+				return term_val
 
 			# find next action with min utility
 			v = 99999
-			for mv in nextMoves:
-				mvValue = self._alpha_beta_value(mv, nextState, alpha, beta, depth, next_color)
+			for mv in next_moves:
+				mvValue = self._alpha_beta_value(mv, next_state, alpha, beta, depth, next_color)
 				v = min(v, mvValue)
 				#prune if value is small enough
 				if v < alpha:

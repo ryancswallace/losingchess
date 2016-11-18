@@ -30,7 +30,7 @@ class LosingBoard:
 							}
 
 
-	def getLegalMoves(self):
+	def get_legal_moves(self):
 		"""
 		Return list of all legal moves for a color given the current gamestate.
 		Since the Board class knows whose turn it is, we need not take a color argument.
@@ -70,7 +70,7 @@ class LosingBoard:
 		self.board.push(mv)
 
 
-	def generateSuccessor(self, mv):
+	def generate_successor(self, mv):
 		"""
 		Generate successor board given move mv without modifying the true board.
 		"""
@@ -79,7 +79,7 @@ class LosingBoard:
 		return new_board
 
 
-	def isGameOver(self):
+	def is_game_over(self):
 		"""	
 		Return true if all of one player's pieces have been consumed.
 		"""
@@ -89,7 +89,7 @@ class LosingBoard:
 				return True
 		return False
 
-	def isDraw(self):
+	def is_draw(self):
 		"""
 		Return true if there are only kings left.
 		"""
