@@ -18,9 +18,7 @@ class RandomAgent(Agent):
 		moves = game_state.get_legal_moves()
 		move = random.sample(moves, 1)[0]
 		return move
-
-
-############### DOES NOT WORK AND IS UGLY! ####################
+		
 
 class AlphaBetaAgent(Agent):
 
@@ -45,8 +43,15 @@ class AlphaBetaAgent(Agent):
 			values[move] = self._alpha_beta_value(move, game_state, -99999, 99999, 0, self.color)
 			alpha = max(alpha, values[move])
 
-		# return action with max utility
-		return max(values, key=values.get)	
+		# return action with max utility, 
+		# random action if there's a tie
+		best_val = max(values.values())	
+		best_actions = []
+		for k, v in values.iteritems():
+			if v == best_val:
+				best_actions.append(k)
+
+		return random.sample(best_actions, 1)[0]
 
 
 

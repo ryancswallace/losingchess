@@ -103,8 +103,9 @@ class LosingBoard:
 			for color in [chess.WHITE, chess.BLACK]:
 				if not sum(self.piece_counts[color].values()) == 1 and self.piece_counts[color][chess.KING] == 1:
 					return False
-					
-		return True
+			return True
+
+		return False
 
 
 	def __str__(self):
