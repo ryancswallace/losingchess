@@ -41,7 +41,7 @@ class LosingBoard:
 		Return list of all legal moves for a color given the current gamestate.
 		Since the Board class knows whose turn it is, we need not take a color argument.
 		"""
-
+		
 		legal_moves = []
 
 		# get legal moves under normal chess rules

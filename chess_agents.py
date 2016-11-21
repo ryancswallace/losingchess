@@ -1,6 +1,7 @@
 import chess
 import losing_board
 import random
+import time
 
 class Agent:
 
@@ -21,7 +22,6 @@ class RandomAgent(Agent):
 		
 
 class AlphaBetaAgent(Agent):
-
 	def get_move(self, game_state):
 		"""
 		Return minimax move using self.depth, self.eval_func, and alpha-beta pruning.
@@ -50,7 +50,6 @@ class AlphaBetaAgent(Agent):
 		for k, v in values.iteritems():
 			if v == best_val:
 				best_actions.append(k)
-
 		return random.sample(best_actions, 1)[0]
 
 
@@ -79,7 +78,7 @@ class AlphaBetaAgent(Agent):
 		# if this agent is to move
 		if next_color == self.color:
 
-			# increment depth if agent is pacman
+			# increment depth
 			depth += 1
 
 			# if we've reached a terminal state

@@ -12,10 +12,9 @@ and games between an AI and a human.
 Perhaps we'll use command line arguments to select agent types,
 evaluation functions, number of AIs, a la Berkeley.
 """
-
 board = losing_board.LosingBoard(no_kings=True)
-a1 = chess_agents.AlphaBetaAgent(color=chess.WHITE, eval_func=evaluation.anti_pawn, depth='1')
-a2 = chess_agents.RandomAgent(color=chess.BLACK, eval_func=evaluation.anti_pawn, depth='1')
+a1 = chess_agents.AlphaBetaAgent(color=chess.WHITE, eval_func=evaluation.weighted_piece_count_w_captures, depth='1')
+a2 = chess_agents.RandomAgent(color=chess.BLACK, eval_func=evaluation.weighted_piece_count_w_captures, depth='1')
 
 
 while True:
