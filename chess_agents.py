@@ -17,8 +17,11 @@ class Agent:
 class RandomAgent(Agent):
     def get_move(self, game_state):
         moves = game_state.get_legal_moves()
-        move = random.sample(moves, 1)[0]
-        return move
+        if len(moves) == 0:
+        	return None
+        else:
+	        move = random.sample(moves, 1)[0]
+	        return move
 
 
 class AlphaBetaAgent(Agent):

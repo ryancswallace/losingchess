@@ -120,9 +120,16 @@ class LosingBoard:
     def has_queenside_castling_rights(self, color):
         return self.board.has_queenside_castling_rights(color)
 
+    def has_legal_en_passant(self):
+    	return self.board.has_legal_en_passant()
+
+    def ep_square(self):
+    	return self.board.ep_square
+
+    def turn(self):
+    	return self.board.turn
 
     def __str__(self):
-
         return str(self.board)
 
 
