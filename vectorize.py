@@ -3,6 +3,7 @@ import losing_board
 
 # this case handles promotions easily
 def square_vector(board):
+    board_type = board.__class__.__name__
     out_vec = []
     all_squares = chess.SquareSet(chess.BB_ALL)
     for square in all_squares:
@@ -42,18 +43,25 @@ def square_vector(board):
 
     # en passant rights
     if board.has_legal_en_passant():
-        out_vec.append(board.ep_square())
+        if board_type == 'LosingBoard':
+            out_vec.append(board.ep_square())
+        else:
+            out_vec.append(board.ep_square)
     else:
         out_vec.append(0)
 
     # turn
-    out_vec.append(int(board.turn()))
+    if board_type == 'LosingBoard':
+        out_vec.append(int(board.turn()))
+    else:
+        out_vec.append(int(board.turn))
     
     return out_vec
 
 # promotions much more difficult here
 # instead of full encoding of promotions, we follow Lai and use piece counts
 def piece_vector(board):
+    board_type = board.__class__.__name__
     out_vec = []
     piece_types = [chess.PAWN, chess.KNIGHT, chess.BISHOP, chess.ROOK, chess.QUEEN, chess.KING]
     white_counts = [0] * 6
@@ -122,12 +130,18 @@ def piece_vector(board):
 
     # en passant rights
     if board.has_legal_en_passant():
-        out_vec.append(board.ep_square())
+        if board_type == 'LosingBoard':
+            out_vec.append(board.ep_square())
+        else:
+            out_vec.append(board.ep_square)
     else:
         out_vec.append(0)
 
     # turn
-    out_vec.append(int(board.turn()))
+    if board_type == 'LosingBoard':
+        out_vec.append(int(board.turn()))
+    else:
+        out_vec.append(int(board.turn))
 
     return out_vec
 
