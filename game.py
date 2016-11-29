@@ -1,9 +1,3 @@
-import sys
-import chess
-import losing_board
-import chess_agents
-import evaluation
-import time
 import vectorize
 
 """
@@ -13,42 +7,53 @@ and games between an AI and a human.
 Perhaps we'll use command line arguments to select agent types,
 evaluation functions, number of AIs, a la Berkeley.
 """
-board = losing_board.LosingBoard(no_kings=True)
-a1 = chess_agents.AlphaBetaAgent(color=chess.WHITE, eval_func=evaluation.weighted_piece_count, depth='1')
-a2 = chess_agents.RandomAgent(color=chess.BLACK, eval_func=evaluation.weighted_piece_count, depth='1')
+class Game:
+	def __init__(self, board, a1, a2):
+		self.board = board
+		self.a1 = a1
+		self.a2 = a2
 
-while True:
+	def play(self, max_turns=None):
+		position_values = []
+		turn_num = 0
+		while True:
+		    outer_break = False
+		    turn = False
+		    for agent in [self.a1,self.a2]:
+		        mv, val = agent.get_move(self.board, return_value=True)
+		        position_values.append(val)
+		        if not mv:
+		            outer_break = True
+		            print "It's a draw."
+		            break
+		        self.board.move(mv)
 
-    outer_break = False
-    turn = False
-    for agent in [a1,a2]:
-        mv = agent.get_move(board)
-        if not mv:
-            outer_break = True
-            print "It's a draw."
-            break
-        board.move(mv)
 
+		        print "Agent " + str(turn + 1) + " makes move: "+ str(mv)
+		        print self.board
+		        print
+		        print vectorize.piece_vector(self.board)
+		        print 
 
-        print "Agent " + str(turn + 1) + " makes move: "+ str(mv)
-        print board
-        print
-        print vectorize.piece_vector(board)
-        print 
+		        turn = not turn
 
-        turn = not turn
+		        if self.board.is_game_over():
+		            print
+		            print "Agent " + str(turn + 1) + " victorious in " + str(self.board.board.fullmove_number) + " plies."
+		            print
+		            outer_break = True
+		            break
+		        if self.board.is_draw():
+		            print "It's a draw in " + str(self.board.board.fullmove_number) + " plies."
+		            print
+		            draw = True
+		            break
 
-        if board.is_game_over():
-            print
-            print "Agent " + str(turn + 1) + " victorious in " + str(board.board.fullmove_number) + " plies."
-            print
-            outer_break = True
-            break
-        if board.is_draw():
-            print "It's a draw in " + str(board.board.fullmove_number) + " plies."
-            print
-            draw = True
-            break
+		    if outer_break: break
 
-    if outer_break: break
+		    turn_num += 1
+		    if max_turns != None:
+				if 2 * turn_num >= max_turns: break
+
+		return position_values
 

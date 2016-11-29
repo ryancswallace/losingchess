@@ -23,7 +23,7 @@ def pgn_to_games(pgn_file):
 
 	return games
 
-def pgn_to_labeled_board(pgn_file):
+def pgn_to_boards(pgn_file, labels=False, vectorized=False):
 	games = pgn_to_games(pgn_file)
 	board_result_pairs = []
 	for game in games:
@@ -43,7 +43,17 @@ def pgn_to_labeled_board(pgn_file):
 		node = game
 		while not node.is_end():
 			node = node.variation(0)
-			vector = vectorize.piece_vector(node.board())
-			board_result_pairs.append((vector, result))
+			if vectorized:
+				vector = vectorize.piece_vector(node.board())
+				if labels:
+					board_result_pairs.append((vector, result))
+				else:
+					board_result_pairs.append(vector)
+			else:
+				if labels:
+					board_result_pairs.append((node.board(), result))
+				else:
+					board_result_pairs.append(node.board())
 
-# board_result_pairs = pgn_to_labeled_board('data/all_losing.pgn')
+	return board_result_pairs
+

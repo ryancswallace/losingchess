@@ -14,14 +14,14 @@ class LosingBoard:
     -> Pawns are automatically promoted to Queens.
     """
 
-    def __init__(self, no_kings=False):
+    def __init__(self, no_kings=False, b_fen='rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'):
         k=1
         self.no_kings = no_kings
         if self.no_kings:
             self.board = chess.Board(fen='rnbq1bnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQ1BNR w Qq - 0 1')
             k=0
         else:
-            self.board = chess.Board()
+            self.board = chess.Board(fen=b_fen)
 
         self.piece_counts = { color: {
                                         chess.PAWN: 8,

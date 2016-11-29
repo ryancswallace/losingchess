@@ -1,10 +1,7 @@
 import chess
-import losing_board
 import random
-import time
 
 class Agent:
-
     def __init__(self, eval_func, color=chess.WHITE, depth='1'):
         self.color = color
         self.eval_func = eval_func
@@ -25,7 +22,7 @@ class RandomAgent(Agent):
 
 
 class AlphaBetaAgent(Agent):
-    def get_move(self, game_state):
+    def get_move(self, game_state, return_value=False):
         """
         Return minimax move using self.depth, self.eval_func, and alpha-beta pruning.
         """
@@ -53,8 +50,11 @@ class AlphaBetaAgent(Agent):
         for k, v in values.iteritems():
             if v == best_val:
                 best_actions.append(k)
-        return random.sample(best_actions, 1)[0]
-
+        best_action = random.sample(best_actions, 1)[0]
+        if return_value:
+        	return (best_action, best_val)
+        else:
+        	return best_action
 
 
     def _alpha_beta_value(self, move, game_state, alpha, beta, depth, color):
