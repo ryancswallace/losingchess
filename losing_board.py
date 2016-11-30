@@ -44,8 +44,9 @@ class LosingBoard:
 
         legal_moves = []
 
-        # get legal moves under normal chess rules
-        chess_legal_moves = self.board.legal_moves
+        # TODO castling shouldn't actually be allowed
+        # get pseudo legal moves under normal chess rules (includes putting king into check)
+        chess_legal_moves = self.board.pseudo_legal_moves
 
         # check for attacking positions
         # if one is found, we only include attacking moves among legal moves
@@ -72,6 +73,10 @@ class LosingBoard:
         if p:
             isWhite = str(p).isupper()
             self.piece_counts[isWhite][p.piece_type] -= 1
+        elif mv.promotion is not None:
+            isWhite = str(mv.promotion).isupper()
+            self.piece_counts[isWhite][mv.promotion] += 1
+            self.piece_counts[isWhite][chess.PAWN] -= 1
 
         self.board.push(mv)
 
@@ -93,9 +98,14 @@ class LosingBoard:
         for k in self.piece_counts:
             if sum(self.piece_counts[k].values()) == 0:
                 return True
+            # TODO this should go away, but currently not all draws are registering
+            # TODO turns out pawn promotions aren't figuring in for piece counts
+            else:
+                print self.piece_counts[k].values()
         return False
 
 
+    # TODO not sure this is what we want
     def is_draw(self):
         """
         Return true if there are only kings left.
@@ -104,6 +114,7 @@ class LosingBoard:
             for color in [chess.WHITE, chess.BLACK]:
                 if not sum(self.piece_counts[color].values()) == 1 and self.piece_counts[color][chess.KING] == 1:
                     return False
+            print 'we think there are only kings left?'
             return True
 
         return False
@@ -128,6 +139,9 @@ class LosingBoard:
 
     def turn(self):
     	return self.board.turn
+
+    def is_seventyfive_moves(self):
+        return self.board.is_seventyfive_moves()
 
     def __str__(self):
         return str(self.board)

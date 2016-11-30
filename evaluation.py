@@ -80,7 +80,7 @@ class SoftmaxEval:
         x_np = np.array(board_vector).reshape(1,len(board_vector))
         pred = self.sess.run(predict, feed_dict={self.x: x_np})[0]
         print pred
-    	if color == chess.WHITE:
-    		return pred
-    	else:
-    		return 1 - pred
+        if color == chess.WHITE:
+            return pred
+        else:
+            return 2 - pred

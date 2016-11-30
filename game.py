@@ -25,12 +25,22 @@ class Game:
             outer_break = False
             turn = False
             for agent in [self.a1,self.a2]:
-                mv, val = agent.get_move(self.board, return_value=True)
-                position_values.append(val)
-                if not mv:
+                res = agent.get_move(self.board, return_value=True)
+                if res is None:
                     outer_break = True
-                    print "It's a draw."
+                    print "Because it's a stalemate, Agent" + str(turn + 1) + " victorious!"
                     break
+                else:
+                    mv, val = res
+                    position_values.append(val)
+                    if self.board.is_seventyfive_moves():
+                        outer_break = True
+                        print "It's a draw due to 75 moves."
+                        break
+                    if not mv:
+                        outer_break = True
+                        print "Because it's a stalemate, Agent " + str(turn + 1) + " victorious!"
+                        break
                 self.board.move(mv)
 
 
@@ -46,11 +56,14 @@ class Game:
                     print
                     outer_break = True
                     break
-                if self.board.is_draw():
-                    print "It's a draw in " + str(self.board.board.fullmove_number) + " plies."
-                    print
-                    draw = True
-                    break
+                # took this section out because the two kings thing isn't super relevant?
+                # if self.board.is_draw():
+                #     print "It's a draw in " + str(self.board.board.fullmove_number) + " plies."
+                #     print
+                #     draw = True
+                #     # TODO seems like we need this here?
+                #     outer_break = True
+                #     break
 
             if outer_break: break
 
@@ -61,15 +74,15 @@ class Game:
         return position_values
 
 # example run with softmax
-sm_model = softmax.Softmax(100, 30, 0.01)
-sm_model.train(print_accuracy=True)
+sm_model = softmax.Softmax(1000, 3000, 0.01)
+sm_model.train(print_accuracy=False)
 
 sm_eval = evaluation.SoftmaxEval(sm_model)
 eval1 = sm_eval.softmax_eval
 eval2 = sm_eval.softmax_eval
 
-a1 = chess_agents.AlphaBetaAgent(color=chess.WHITE, eval_func=eval1, depth='1')
-a2 = chess_agents.AlphaBetaAgent(color=chess.BLACK, eval_func=eval2, depth='1')
+a1 = chess_agents.AlphaBetaAgent(color=chess.WHITE, eval_func=eval1, depth='0')
+a2 = chess_agents.AlphaBetaAgent(color=chess.BLACK, eval_func=eval2, depth='0')
 board = losing_board.LosingBoard(no_kings=False)
 
 game = Game(board, a1, a2)

@@ -15,10 +15,10 @@ class RandomAgent(Agent):
     def get_move(self, game_state):
         moves = game_state.get_legal_moves()
         if len(moves) == 0:
-        	return None
+            return None
         else:
-	        move = random.sample(moves, 1)[0]
-	        return move
+            move = random.sample(moves, 1)[0]
+            return move
 
 
 class AlphaBetaAgent(Agent):
@@ -52,9 +52,9 @@ class AlphaBetaAgent(Agent):
                 best_actions.append(k)
         best_action = random.sample(best_actions, 1)[0]
         if return_value:
-        	return (best_action, best_val)
+            return (best_action, best_val)
         else:
-        	return best_action
+            return best_action
 
 
     def _alpha_beta_value(self, move, game_state, alpha, beta, depth, color):
