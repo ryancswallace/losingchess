@@ -6,18 +6,9 @@ import chess_agents
 import evaluation
 
 import random
-import tensorflow as tf
-
-all_training_boards = parse.pgn_to_boards('data/all_losing.pgn')
-vector_len = len(board_result_pairs[0][0])
-
-# x = tf.placeholder(tf.float32, [None, 784])
-# W = tf.Variable(tf.zeros([vector_len, 3]))
-# b = tf.Variable(tf.zeros([3]))
-# y = tf.nn.softmax(tf.matmul(x, W) + b)
 
 # parameters of training
-num_training_iterations = 10
+num_training_iterations = 1000
 num_sample_positions = 256
 num_training_turns = 12
 apply_random_move = False

@@ -75,7 +75,12 @@ def piece_vector(board):
         white_counts[ptype - 1] = len(white_set)
         black_counts[ptype - 1] = len(black_set)
 
-        if ptype == chess.PAWN:    
+        if ptype == chess.PAWN: 
+            if len(white_set) > 8:
+                white_set = list(white_set)[:8]
+            if len(black_set) > 8:
+                black_set = list(black_set)[:8] 
+
             for p_square in white_set:
                 out_vec.append(p_square + 1)
             out_vec += [0] * (8 - len(white_set))
@@ -83,6 +88,13 @@ def piece_vector(board):
                 out_vec.append(p_square + 1)
             out_vec += [0] * (8 - len(black_set))
         elif ptype == chess.KNIGHT:
+            if len(white_set) > 2:
+                white_set = list(white_set)[:2]
+            if len(black_set) > 2:
+                black_set = list(black_set)[:2]
+
+            if len(white_set) > 8:
+                white_set = white_set[:8] 
             for n_square in white_set:
                 out_vec.append(n_square + 1)
             out_vec += [0] * (2 - len(white_set))
@@ -90,6 +102,11 @@ def piece_vector(board):
                 out_vec.append(n_square + 1)
             out_vec += [0] * (2 - len(black_set))
         elif ptype == chess.BISHOP:
+            if len(white_set) > 2:
+                white_set = list(white_set)[:2]
+            if len(black_set) > 2:
+                black_set = list(black_set)[:2]
+
             for b_square in white_set:
                 out_vec.append(b_square + 1)
             out_vec += [0] * (2 - len(white_set))
@@ -97,6 +114,11 @@ def piece_vector(board):
                 out_vec.append(b_square + 1)
             out_vec += [0] * (2 - len(black_set))
         elif ptype == chess.ROOK:
+            if len(white_set) > 2:
+                white_set = list(white_set)[:2]
+            if len(black_set) > 2:
+                black_set = list(black_set)[:2]
+
             for r_square in white_set:
                 out_vec.append(r_square + 1)
             out_vec += [0] * (2 - len(white_set))
@@ -104,6 +126,11 @@ def piece_vector(board):
                 out_vec.append(r_square + 1)
             out_vec += [0] * (2 - len(black_set))
         elif ptype == chess.QUEEN:
+            if len(white_set) > 1:
+                white_set = list(white_set)[:1]
+            if len(black_set) > 1:
+                black_set = list(black_set)[:1]
+
             for q_square in white_set:
                 out_vec.append(q_square + 1)
             out_vec += [0] * (1- len(white_set))
@@ -111,6 +138,11 @@ def piece_vector(board):
                 out_vec.append(q_square + 1)
             out_vec += [0] * (1 - len(black_set))
         else:
+            if len(white_set) > 1:
+                white_set = list(white_set)[:1]
+            if len(black_set) > 1:
+                black_set = list(black_set)[:1]
+
             for k_square in white_set:
                 out_vec.append(k_square + 1)
             out_vec += [0] * (1 - len(white_set))
@@ -144,14 +176,4 @@ def piece_vector(board):
         out_vec.append(int(board.turn))
 
     return out_vec
-
-
-# b = losing_board.LosingBoard(no_kings=False)
-# print piece_vector(b)
-# moves = b.get_legal_moves()
-# b.move(moves[0])
-# print piece_vector(b)
-# moves = b.get_legal_moves()
-# b.move(moves[0])
-# print piece_vector(b)
 

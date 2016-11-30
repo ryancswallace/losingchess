@@ -1,4 +1,10 @@
+import chess
+
 import vectorize
+import losing_board
+import chess_agents
+import softmax
+import evaluation
 
 """
 Here we will build the processes that drive games between two AIs,
@@ -32,8 +38,6 @@ class Game:
 		        print "Agent " + str(turn + 1) + " makes move: "+ str(mv)
 		        print self.board
 		        print
-		        print vectorize.piece_vector(self.board)
-		        print 
 
 		        turn = not turn
 
@@ -56,4 +60,19 @@ class Game:
 				if 2 * turn_num >= max_turns: break
 
 		return position_values
+
+# example run with softmax
+sm_model = softmax.Softmax(100, 30, 0.5)
+sm_model.train(print_accuracy=True)
+
+sm_eval = evaluation.SoftmaxEval(sm_model)
+eval1 = sm_eval.softmax_eval
+eval2 = sm_eval.softmax_eval
+
+a1 = chess_agents.AlphaBetaAgent(color=chess.WHITE, eval_func=eval1, depth='1')
+a2 = chess_agents.AlphaBetaAgent(color=chess.BLACK, eval_func=eval2, depth='1')
+board = losing_board.LosingBoard(no_kings=False)
+
+game = Game(board, a1, a2)
+game.play()
 

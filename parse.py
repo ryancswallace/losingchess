@@ -8,7 +8,8 @@ representing the games.
 def pgn_to_games(pgn_file):
 	pgn = open(pgn_file)
 	games = []
-	while True:
+	# while True:
+	for _ in range(100):
 		try:
 			game = chess.pgn.read_game(pgn)
 		except ValueError:
@@ -27,15 +28,15 @@ def pgn_to_boards(pgn_file, labels=False, vectorized=False):
 	games = pgn_to_games(pgn_file)
 	board_result_pairs = []
 	for game in games:
-		# get result of game - 0 for draw, 1 for white win, 2 for black win
+		# get result of game - 0.5 for draw, 1 for white win, 0 for white loss
 		result_string = game.headers['Result']
 		result = None
 		if result_string == '1/2-1/2':
-			result = 0
+			result = 0.5
 		elif result_string == '1-0':
 			result = 1
 		elif result_string == '0-1':
-			result = 2
+			result = 0
 		else:
 			continue
 
