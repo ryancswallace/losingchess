@@ -19,7 +19,7 @@ class Softmax:
         # get vectorized, labeled training data
         all_training_boards = parse.pgn_to_boards('data/all_losing.pgn', labels=True, vectorized=True)
         num_boards = len(all_training_boards)
-        vector_len = len(all_training_boards[0][0])
+        self.vector_len = len(all_training_boards[0][0])
 
         # encode label as one hot vector
         for i, (board_vector, label) in enumerate(all_training_boards):
@@ -36,11 +36,11 @@ class Softmax:
             all_training_boards[i] = (all_training_boards[i][0], one_hot_vector)
 
         # holders for training board vectors, and true labels
-        x = tf.placeholder(tf.float32, [None, vector_len])
+        x = tf.placeholder(tf.float32, [None, self.vector_len])
         y_ = tf.placeholder(tf.float32, shape=[None, 3])
 
         # the weight matrix and bias vector
-        W = tf.Variable(tf.zeros([vector_len, 3]))
+        W = tf.Variable(tf.zeros([self.vector_len, 3]))
         b = tf.Variable(tf.zeros([3]))
 
         with tf.Session() as sess:
@@ -58,18 +58,17 @@ class Softmax:
             # subset of boards each time
             for training_iteration in range(self.num_training_iterations):
                 training_boards = random.sample(all_training_boards, self.num_sample_positions)
-                # print training_boards[0]
                 x_train = [t[0] for t in training_boards]
                 y_train = np.array([t[1] for t in training_boards]).reshape(self.num_sample_positions, 3)
                 train_step.run(feed_dict={x: x_train, y_: y_train})
 
-            if print_accuracy:
-                # evaluate accuracy on whole training set (not reliable because train set = test set)
-                correct_prediction = tf.equal(tf.argmax(y,1), tf.argmax(y_,1))
-                accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
-                x_all = [t[0] for t in all_training_boards]
-                y_all = np.array([t[1] for t in all_training_boards]).reshape(num_boards, 3)
-                print(sess.run(accuracy, feed_dict={x: x_all, y_: y_all}))
+                if print_accuracy:
+                    # evaluate accuracy on whole training set (not reliable because train set = test set)
+                    correct_prediction = tf.equal(tf.argmax(y,1), tf.argmax(y_,1))
+                    accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
+                    x_all = [t[0] for t in all_training_boards]
+                    y_all = np.array([t[1] for t in all_training_boards]).reshape(num_boards, 3)
+                    print(sess.run(accuracy, feed_dict={x: x_all, y_: y_all}))
 
             # convert evaluated tensors to np arrays
             self.W = W.eval()
@@ -100,5 +99,3 @@ class Softmax:
             pred = sess.run(predict, feed_dict={x: x_np})[0]
             return pred
 
-sm_model = Softmax(1000, 3000, 0.3)
-sm_model.train(print_accuracy=True)

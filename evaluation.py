@@ -1,4 +1,6 @@
 import chess
+import tensorflow as tf
+import numpy as np
 
 import vectorize
 
@@ -51,12 +53,34 @@ class WeightedPieceCountWCaptures:
 class SoftmaxEval:
     def __init__(self, softmax_model):
         self.softmax_model = softmax_model
+        if self.softmax_model.W is None or self.softmax_model.b is None:
+            raise Exception('Train softmax first.')
+
+        # tensor for board_vector
+        self.x = tf.placeholder(tf.float32, [1, self.softmax_model.vector_len])
+
+        # the weight matrix and bias vector
+        W = tf.constant(self.softmax_model.W, dtype=tf.float32)
+        b = tf.constant(self.softmax_model.b, dtype=tf.float32)
+
+        self.sess = tf.InteractiveSession()
+        
+        # initialize variables
+        self.sess.run(tf.global_variables_initializer())
+
+        # define model with weights and biases calculated
+        self.y = tf.nn.softmax(tf.matmul(self.x, W) + b)
+
 
     def softmax_eval(self, game_state, color):
         board_vector = vectorize.piece_vector(game_state.board)
-        if color == chess.WHITE:
-            print self.softmax_model.eval(board_vector)
-            return self.softmax_model.eval(board_vector)
-        else:
-            return 1 - self.softmax_model.eval(board_vector)
 
+        # predict new board
+        predict = tf.argmax(self.y,1)
+        x_np = np.array(board_vector).reshape(1,len(board_vector))
+        pred = self.sess.run(predict, feed_dict={self.x: x_np})[0]
+        print pred
+    	if color == chess.WHITE:
+    		return pred
+    	else:
+    		return 1 - pred
