@@ -79,6 +79,7 @@ class SoftmaxEval:
         predict = tf.argmax(self.y,1)
         x_np = np.array(board_vector).reshape(1,len(board_vector))
         pred = self.sess.run(predict, feed_dict={self.x: x_np})[0]
+        print pred
     	if color == chess.WHITE:
     		return pred
     	else:
