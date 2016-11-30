@@ -44,7 +44,6 @@ class LosingBoard:
 
         legal_moves = []
 
-        # TODO castling shouldn't actually be allowed
         # get pseudo legal moves under normal chess rules (includes putting king into check)
         chess_legal_moves = self.board.pseudo_legal_moves
 
@@ -59,7 +58,9 @@ class LosingBoard:
         if attacking:
             return legal_moves
         else:
-            return list(chess_legal_moves)
+            # take out castling moves
+            out_moves = [move for move in list(chess_legal_moves) if not self.board.is_castling(move)]
+            return out_moves
 
 
     def move(self, mv):
@@ -98,14 +99,10 @@ class LosingBoard:
         for k in self.piece_counts:
             if sum(self.piece_counts[k].values()) == 0:
                 return True
-            # TODO this should go away, but currently not all draws are registering
-            # TODO turns out pawn promotions aren't figuring in for piece counts
-            else:
-                print self.piece_counts[k].values()
         return False
 
 
-    # TODO not sure this is what we want
+    # TODO deprecated
     def is_draw(self):
         """
         Return true if there are only kings left.
@@ -114,7 +111,6 @@ class LosingBoard:
             for color in [chess.WHITE, chess.BLACK]:
                 if not sum(self.piece_counts[color].values()) == 1 and self.piece_counts[color][chess.KING] == 1:
                     return False
-            print 'we think there are only kings left?'
             return True
 
         return False
@@ -132,13 +128,13 @@ class LosingBoard:
         return self.board.has_queenside_castling_rights(color)
 
     def has_legal_en_passant(self):
-    	return self.board.has_legal_en_passant()
+        return self.board.has_legal_en_passant()
 
     def ep_square(self):
-    	return self.board.ep_square
+        return self.board.ep_square
 
     def turn(self):
-    	return self.board.turn
+        return self.board.turn
 
     def is_seventyfive_moves(self):
         return self.board.is_seventyfive_moves()

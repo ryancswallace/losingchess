@@ -28,7 +28,7 @@ class Game:
                 res = agent.get_move(self.board, return_value=True)
                 if res is None:
                     outer_break = True
-                    print "Because it's a stalemate, Agent" + str(turn + 1) + " victorious!"
+                    print "Because it's a stalemate, Agent " + str(turn + 1) + " victorious!"
                     break
                 else:
                     mv, val = res
@@ -38,6 +38,7 @@ class Game:
                         print "It's a draw due to 75 moves."
                         break
                     if not mv:
+                        # TODO this case might not be necessary
                         outer_break = True
                         print "Because it's a stalemate, Agent " + str(turn + 1) + " victorious!"
                         break
@@ -56,14 +57,6 @@ class Game:
                     print
                     outer_break = True
                     break
-                # took this section out because the two kings thing isn't super relevant?
-                # if self.board.is_draw():
-                #     print "It's a draw in " + str(self.board.board.fullmove_number) + " plies."
-                #     print
-                #     draw = True
-                #     # TODO seems like we need this here?
-                #     outer_break = True
-                #     break
 
             if outer_break: break
 

@@ -36,6 +36,7 @@ class WeightedPieceCountWCaptures:
         pieces = game_state.piece_counts
         for piece in pieces[color]:
             # look at all moves
+            # TODO this gets all moves regardless of piece
             legal_moves = game_state.get_legal_moves()
             for mv in legal_moves:
                 # check if any move captures
@@ -70,7 +71,6 @@ class SoftmaxEval:
 
         # define model with weights and biases calculated
         self.y = tf.nn.softmax(tf.matmul(self.x, W) + b)
-
 
     def softmax_eval(self, game_state, color):
         board_vector = vectorize.piece_vector(game_state.board)
