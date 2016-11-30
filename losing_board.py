@@ -44,8 +44,8 @@ class LosingBoard:
 
         legal_moves = []
 
-        # get legal moves under normal chess rules
-        chess_legal_moves = self.board.legal_moves
+        # get legal moves under normal chess rules (except king can move or stay in check)
+        chess_legal_moves = self.board.pseudo_legal_moves
 
         # check for attacking positions
         # if one is found, we only include attacking moves among legal moves
@@ -131,6 +131,4 @@ class LosingBoard:
 
     def __str__(self):
         return str(self.board)
-
-
 

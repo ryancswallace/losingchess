@@ -17,18 +17,18 @@ naive_weights = {chess.PAWN: 1,
                  chess.QUEEN: 6}
 
 class WeightedPieceCount:
-	def weighted_piece_count(self, game_state, color):
-	    pieces = game_state.piece_counts
+    def weighted_piece_count(self, game_state, color):
+        pieces = game_state.piece_counts
 
-	    tot = 0
-	    for k in pieces[color]:
-	        tot += (pieces[color][k] - pieces[not color][k])*naive_weights[k]
+        tot = 0
+        for k in pieces[color]:
+            tot += (pieces[color][k] - pieces[not color][k])*naive_weights[k]
 
-	    return tot
+        return tot
 
 class AntiPawn:
-	def anti_pawn(self, game_state, color):
-	    return -game_state.piece_counts[color][chess.PAWN]
+    def anti_pawn(self, game_state, color):
+        return -game_state.piece_counts[color][chess.PAWN]
 
 class WeightedPieceCountWCaptures:
     def captures_present(self, game_state, color):
@@ -43,7 +43,7 @@ class WeightedPieceCountWCaptures:
                     return True
         return False
 
-    def weighted_piece_count_w_captures(self, game_state, color):
+    def weighted_piece_count_w_captures(self, game_state, color):        
         weighted_piece_counter = WeightedPieceCount()
         if self.captures_present(game_state, color):
             return weighted_piece_counter.weighted_piece_count(game_state, color) - 5
@@ -74,13 +74,14 @@ class SoftmaxEval:
 
     def softmax_eval(self, game_state, color):
         board_vector = vectorize.piece_vector(game_state.board)
+        print game_state.board
 
         # predict new board
         predict = tf.argmax(self.y,1)
         x_np = np.array(board_vector).reshape(1,len(board_vector))
         pred = self.sess.run(predict, feed_dict={self.x: x_np})[0]
         print pred
-    	if color == chess.WHITE:
-    		return pred
-    	else:
-    		return 1 - pred
+        if color == chess.WHITE:
+            return pred
+        else:
+            return 2 - pred

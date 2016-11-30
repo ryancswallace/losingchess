@@ -5,7 +5,7 @@ class Agent:
     def __init__(self, eval_func, color=chess.WHITE, depth='1'):
         self.color = color
         self.eval_func = eval_func
-        self.depth = int(depth)
+        self.depth = int(depth) - 1
 
     def get_move(self, game_state):
         raise Exception("Undefined!")
@@ -15,10 +15,10 @@ class RandomAgent(Agent):
     def get_move(self, game_state):
         moves = game_state.get_legal_moves()
         if len(moves) == 0:
-        	return None
+            return None
         else:
-	        move = random.sample(moves, 1)[0]
-	        return move
+            move = random.sample(moves, 1)[0]
+            return move
 
 
 class AlphaBetaAgent(Agent):
@@ -33,9 +33,9 @@ class AlphaBetaAgent(Agent):
             return None
 
 
-        #p = .1		# with probability p, choose random action
+        #p = .1     # with probability p, choose random action
         #if random.uniform(0,1) < p:
-        #	return random.sample(moves, 1)[0]
+        #   return random.sample(moves, 1)[0]
 
         values = {}
         alpha = -99999
@@ -52,19 +52,15 @@ class AlphaBetaAgent(Agent):
                 best_actions.append(k)
         best_action = random.sample(best_actions, 1)[0]
         if return_value:
-        	return (best_action, best_val)
+            return (best_action, best_val)
         else:
-        	return best_action
+            return best_action
 
 
     def _alpha_beta_value(self, move, game_state, alpha, beta, depth, color):
         """
         Helper function for performing alpha-beta pruning.
         """
-        # has max depth been reached?
-        if depth == self.depth:
-            return self.eval_func(game_state, color)
-
         # get next game state
         next_state = game_state.generate_successor(move)
 
@@ -75,11 +71,15 @@ class AlphaBetaAgent(Agent):
         # does agent move next?
         next_color = not color
 
+        # has max depth been reached?
+        if depth == self.depth:
+            return self.eval_func(next_state, color)
+
         # get information about next state
         next_moves = next_state.get_legal_moves()
 
         # if this agent is to move
-        if next_color == self.color:
+        if next_color == self.color: 
 
             # increment depth
             depth += 1
