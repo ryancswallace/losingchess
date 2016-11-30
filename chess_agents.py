@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import chess
 import losing_board
 import random
@@ -17,24 +18,20 @@ class Agent:
 
 
 class RandomAgent(Agent):
+	"""
+	Chooses random move from among legal moves.
+	"""
 	def get_move(self, game_state):
 		moves = game_state.get_legal_moves()
 		move = random.sample(moves, 1)[0]
 		return move
 
 
-class UserAgent(Agent):
-	def get_move(self, game_state):
-		while True:
-			inmv = raw_input("Enter your move: ")
-			mv = chess.Move.from_uci(inmv)
-			if mv in game_state.get_legal_moves():
-				return mv
-
-
 def _alpha_beta_value(move, game_state, alpha, beta, depth, color, true_color, true_depth, eval_func):
 	"""
 	Helper function for performing alpha-beta pruning in parallel.
+	Note: parallelizing pruning requires sacrificing pruning at the top level ––
+	that being said, it makes searching to a depth of 2 tractable.
 	"""
 	# has max depth been reached?
 	if depth == true_depth:
@@ -96,7 +93,8 @@ def _alpha_beta_value(move, game_state, alpha, beta, depth, color, true_color, t
 			beta = min(beta, v)
 		return v
 
-<<<<<<< HEAD
+
+class AlphaBetaAgent(Agent):
 	def get_move(self, game_state):
 		"""
 		Return minimax move using self.depth, self.eval_func, and alpha-beta pruning.
@@ -113,6 +111,7 @@ def _alpha_beta_value(move, game_state, alpha, beta, depth, color, true_color, t
 								color=self.color, true_color=self.color, 
 								true_depth=self.depth, eval_func=self.eval_func)
 
+		# perform alpha-beta pruning in parallel across 8 processes
 		p = Pool(8)
 		values = p.map(get_ab_value, moves)
 		p.terminate()
@@ -129,68 +128,3 @@ def _alpha_beta_value(move, game_state, alpha, beta, depth, color, true_color, t
 
 		return random.sample(best_actions, 1)[0]
 
-
-
-	def _alpha_beta_value(self, move, game_state, alpha, beta, depth, color):
-		"""
-		Helper function for performing alpha-beta pruning.
-		"""
-		# has max depth been reached?
-		if depth == self.depth:
-			return self.eval_func(game_state, color)
-
-		# get next game state
-		next_state = game_state.generate_successor(move)
-
-		# has agent won?
-		if next_state.is_game_over():
-			return 99999
-
-		# does agent move next?
-		next_color = not color
-
-		# get information about next state
-		next_moves = next_state.get_legal_moves()
-
-		# if this agent is to move
-		if next_color == self.color:
-
-			# increment depth if agent is pacman
-			depth += 1
-
-			# if we've reached a terminal state
-			# update alpha and return terminal value
-			if next_moves == []:
-				term_val = self.eval_func(next_state, next_color)
-				alpha = max(alpha, term_val)
-				return term_val
-
-			# find next action with max utility
-			v = -99999
-			for mv in next_moves:
-				mvValue = self._alpha_beta_value(mv, next_state, alpha, beta, depth, next_color)
-				v = max(v, mvValue)
-				# prune if value is great enough
-			if v > beta:
-			  return v
-			alpha = max(alpha, v)
-			return v
-
-		# if opponent is to move
-		else:
-			# if we've reached a terminal state
-			# return terminal value without updating alpha/beta
-			if next_moves == []:
-				term_val = self.eval_func(next_state, next_color)
-				return term_val
-
-			# find next action with min utility
-			v = 99999
-			for mv in next_moves:
-				mvValue = self._alpha_beta_value(mv, next_state, alpha, beta, depth, next_color)
-				v = min(v, mvValue)
-				#prune if value is small enough
-				if v < alpha:
-					return v
-				beta = min(beta, v)
-			return v
