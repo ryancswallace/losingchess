@@ -19,7 +19,7 @@ class Softmax:
 		# get vectorized, labeled training data
 		all_training_boards = parse.pgn_to_boards('data/all_losing.pgn', labels=True, vectorized=True)
 		num_boards = len(all_training_boards)
-		vector_len = len(all_training_boards[0][0])
+		self.vector_len = len(all_training_boards[0][0])
 
 		# encode label as one hot vector
 		for i, (board_vector, label) in enumerate(all_training_boards):
@@ -36,11 +36,11 @@ class Softmax:
 			all_training_boards[i] = (all_training_boards[i][0], one_hot_vector)
 
 		# holders for training board vectors, and true labels
-		x = tf.placeholder(tf.float32, [None, vector_len])
+		x = tf.placeholder(tf.float32, [None, self.vector_len])
 		y_ = tf.placeholder(tf.float32, shape=[None, 3])
 
 		# the weight matrix and bias vector
-		W = tf.Variable(tf.zeros([vector_len, 3]))
+		W = tf.Variable(tf.zeros([self.vector_len, 3]))
 		b = tf.Variable(tf.zeros([3]))
 
 		with tf.Session() as sess:

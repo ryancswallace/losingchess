@@ -8,8 +8,8 @@ representing the games.
 def pgn_to_games(pgn_file):
 	pgn = open(pgn_file)
 	games = []
-	# while True:
-	for _ in range(100):
+	while True:
+	# for _ in range(100):
 		try:
 			game = chess.pgn.read_game(pgn)
 		except ValueError:

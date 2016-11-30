@@ -61,7 +61,7 @@ class Game:
 		return position_values
 
 # example run with softmax
-sm_model = softmax.Softmax(100, 30, 0.5)
+sm_model = softmax.Softmax(100, 30, 0.01)
 sm_model.train(print_accuracy=True)
 
 sm_eval = evaluation.SoftmaxEval(sm_model)
