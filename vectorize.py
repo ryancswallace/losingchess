@@ -1,5 +1,4 @@
 import chess
-import losing_board
 
 # this case handles promotions easily
 def square_vector(board):
@@ -176,4 +175,3 @@ def piece_vector(board):
         out_vec.append(int(board.turn))
 
     return out_vec
-

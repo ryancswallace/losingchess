@@ -1,6 +1,5 @@
 import chess
 
-import vectorize
 import losing_board
 import chess_agents
 import softmax
@@ -75,4 +74,3 @@ board = losing_board.LosingBoard(no_kings=False)
 
 game = Game(board, a1, a2)
 game.play()
-

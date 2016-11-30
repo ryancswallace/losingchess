@@ -57,4 +57,3 @@ def pgn_to_boards(pgn_file, labels=False, vectorized=False):
 					board_result_pairs.append(node.board())
 
 	return board_result_pairs
-
