@@ -40,6 +40,8 @@ class LosingBoard:
 		"""
 		Return list of all legal moves for a color given the current gamestate.
 		Since the Board class knows whose turn it is, we need not take a color argument.
+
+		TODO: KING EXCEPTION!!!!!!
 		"""
 
 		legal_moves = []
