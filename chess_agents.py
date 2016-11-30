@@ -1,18 +1,19 @@
 import chess
 import losing_board
 import random
+import time
 from functools import partial
 from multiprocessing import Pool
 
 class Agent:
 
-	def __init__(self, eval_func, color=chess.WHITE, depth='1'):
-		self.color = color
-		self.eval_func = eval_func
-		self.depth = int(depth)
+    def __init__(self, eval_func, color=chess.WHITE, depth='1'):
+        self.color = color
+        self.eval_func = eval_func
+        self.depth = int(depth)
 
-	def get_move(self, game_state):
-		raise Exception("Undefined!")
+    def get_move(self, game_state):
+        raise Exception("Undefined!")
 
 
 class RandomAgent(Agent):
@@ -29,7 +30,6 @@ class UserAgent(Agent):
 			mv = chess.Move.from_uci(inmv)
 			if mv in game_state.get_legal_moves():
 				return mv
-
 
 
 def _alpha_beta_value(move, game_state, alpha, beta, depth, color, true_color, true_depth, eval_func):
@@ -96,9 +96,7 @@ def _alpha_beta_value(move, game_state, alpha, beta, depth, color, true_color, t
 			beta = min(beta, v)
 		return v
 
-
-class AlphaBetaAgent(Agent):
-
+<<<<<<< HEAD
 	def get_move(self, game_state):
 		"""
 		Return minimax move using self.depth, self.eval_func, and alpha-beta pruning.
@@ -196,4 +194,3 @@ class AlphaBetaAgent(Agent):
 					return v
 				beta = min(beta, v)
 			return v
-
