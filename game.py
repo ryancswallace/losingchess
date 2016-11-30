@@ -47,10 +47,10 @@ class Game:
                     # make move
                     self.board.move(mv)
 
-                    # print that 
+                    # print board 
                     print "Agent " + str(turn + 1) + " makes move: "+ str(mv)
                     print self.board
-                    print
+                    print '\n'
 
                     # switch players
                     turn = not turn
@@ -58,9 +58,6 @@ class Game:
                     # check for end of game conditions
                     if self.board.is_game_over():
                         print "Agent " + str(turn + 1) + " victorious in " + str(self.board.board.fullmove_number) + " plies.\n"
-                        outer_break = True
-                    if self.board.is_draw():
-                        print "It's a draw in " + str(self.board.board.fullmove_number) + " plies.\n"
                         outer_break = True
 
             # update turn numbers
@@ -83,8 +80,8 @@ class Game:
 
 weighted_counter = evaluation.WeightedPieceCount()
 
-a1 = chess_agents.AlphaBetaAgent(color=chess.WHITE, eval_func=weighted_counter.weighted_piece_count, depth='2')
-a2 = chess_agents.AlphaBetaAgent(color=chess.BLACK, eval_func=weighted_counter.weighted_piece_count, depth='2')
+a1 = chess_agents.AlphaBetaAgent(color=chess.WHITE, eval_func=weighted_counter.weighted_piece_count, depth='1')
+a2 = chess_agents.AlphaBetaAgent(color=chess.BLACK, eval_func=weighted_counter.weighted_piece_count, depth='1')
 board = losing_board.LosingBoard(no_kings=False)
 
 game = Game(board, a1, a2)

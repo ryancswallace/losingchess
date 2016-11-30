@@ -65,16 +65,17 @@ class LosingBoard:
         """
         Push move mv to true board.
         """
-
-        p = self.board.piece_at(mv.to_square)
-
-        # decrement count of pieces if one is captured
-        if p:
-            isWhite = str(p).isupper()
-            self.piece_counts[isWhite][p.piece_type] -= 1
-
+        # make move
         self.board.push(mv)
 
+        # update piece counts
+        for color in [chess.WHITE, chess.BLACK]:
+            for piece_type in [chess.PAWN, chess.ROOK, chess.BISHOP, chess.QUEEN, chess.KING, chess.KNIGHT]:
+                pieces = self.board.pieces(piece_type, color)
+                if pieces is not None:
+                    self.piece_counts[color][piece_type] = len(pieces)
+                else:
+                    self.piece_counts[color][piece_type] = 0
 
     def generate_successor(self, mv):
         """
@@ -89,23 +90,9 @@ class LosingBoard:
         """
         Return true if all of one player's pieces have been consumed.
         """
-
         for k in self.piece_counts:
-            if sum(self.piece_counts[k].values()) == 0:
+            if all(v == 0 for v in self.piece_counts[k].values()):
                 return True
-        return False
-
-
-    def is_draw(self):
-        """
-        Return true if there are only kings left.
-        """
-        if not self.no_kings:
-            for color in [chess.WHITE, chess.BLACK]:
-                if not sum(self.piece_counts[color].values()) == 1 and self.piece_counts[color][chess.KING] == 1:
-                    return False
-            return True
-
         return False
 
     def piece_at(self, square):
