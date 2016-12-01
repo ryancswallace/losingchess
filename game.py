@@ -25,42 +25,24 @@ class Game:
             outer_break = False
             turn = False
             for agent in [self.a1,self.a2]:
+
+                if outer_break:
+                    break
+
                 res = agent.get_move(self.board, return_value=True)
                 if res is None:
                     outer_break = True
                     print "Because it's a stalemate, Agent " + str(turn + 1) + " victorious!"
                     break
+                
+                # if there are moves to be made
                 else:
+                    # keep track of moves and values
                     mv, val = res
                     position_values.append(val)
                     if self.board.is_seventyfive_moves():
                         outer_break = True
                         print "It's a draw due to 75 moves."
-                        break
-                    if not mv:
-                        # TODO this case might not be necessary
-                        outer_break = True
-                        print "Because it's a stalemate, Agent " + str(turn + 1) + " victorious!"
-                        break
-                self.board.move(mv)
-                # TODO deleted outer break from ryan branch
-
-                # agent finds best move
-                move_val_pair = agent.get_move(self.board, return_value=True)
-                
-                # if there are no moves to be made
-                if move_val_pair is None:
-                    print "It's a draw in " + str(self.board.board.fullmove_number) + " plies.\n"
-                    outer_break = True
-                
-                # if there are moves to be made
-                else:
-                    # keep track of moves and values
-                    mv, val = move_val_pair
-                    position_values.append(val)
-                    moves_made.append(mv)
-                        
-                    # make move
                     self.board.move(mv)
 
                     # print board 
@@ -76,7 +58,6 @@ class Game:
                         print "Agent " + str(turn + 1) + " victorious in " + str(self.board.board.fullmove_number) + " plies."
                         print
                         outer_break = True
-                        break
 
             # update turn numbers
             if max_turns != None and self.board.board.fullmove_number >= max_turns: 
@@ -95,11 +76,11 @@ sm_model.train(print_accuracy=True)
 sm_eval = evaluation.SoftmaxEval(sm_model)
 eval1 = sm_eval.softmax_eval
 eval2 = sm_eval.softmax_eval
-
-weighted_counter = evaluation.WeightedPieceCount()
-
-a1 = chess_agents.AlphaBetaAgent(color=chess.WHITE, eval_func=eval1, depth='0')
-a2 = chess_agents.AlphaBetaAgent(color=chess.BLACK, eval_func=eval2, depth='0')
+#
+# weighted_counter = evaluation.WeightedPieceCount()
+#
+a1 = chess_agents.AlphaBetaAgent(color=chess.WHITE, eval_func=eval1, depth='1')
+a2 = chess_agents.AlphaBetaAgent(color=chess.BLACK, eval_func=eval2, depth='1')
 # a1 = chess_agents.AlphaBetaAgent(color=chess.WHITE, eval_func=weighted_counter.weighted_piece_count, depth='1')
 # a2 = chess_agents.AlphaBetaAgent(color=chess.BLACK, eval_func=weighted_counter.weighted_piece_count, depth='1')
 board = losing_board.LosingBoard(no_kings=False)

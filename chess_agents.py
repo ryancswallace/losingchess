@@ -98,7 +98,7 @@ class AlphaBetaAgent(Agent):
                 v = max(v, mvValue)
                 # prune if value is great enough
             if v > beta:
-              return v
+                return v
             alpha = max(alpha, v)
             return v
 
