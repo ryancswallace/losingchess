@@ -1,8 +1,9 @@
-<<<<<<< HEAD
 import chess
 import losing_board
 import random
 import time
+import copy_reg
+import types
 from functools import partial
 from multiprocessing import Pool
 
@@ -27,75 +28,20 @@ class RandomAgent(Agent):
 		return move
 
 
-def _alpha_beta_value(move, game_state, alpha, beta, depth, color, true_color, true_depth, eval_func):
-	"""
-	Helper function for performing alpha-beta pruning in parallel.
-	Note: parallelizing pruning requires sacrificing pruning at the top level ––
-	that being said, it makes searching to a depth of 2 tractable.
-	"""
-	# has max depth been reached?
-	if depth == true_depth:
-		return eval_func(game_state, color)
+"""
+necessary code for running a class method in parallel that I don't yet understand.
+"""
+def _pickle_method(m):
+    if m.im_self is None:
+        return getattr, (m.im_class, m.im_func.func_name)
+    else:
+        return getattr, (m.im_self, m.im_func.func_name)
 
-	# get next game state
-	next_state = game_state.generate_successor(move)
-
-	# has agent won?
-	if next_state.is_game_over():
-		return 99999
-
-	# does agent move next?
-	next_color = not color
-
-	# get information about next state
-	next_moves = next_state.get_legal_moves()
-
-	# if this agent is to move
-	if next_color == true_color:
-
-		# increment depth if agent is pacman
-		depth += 1
-
-		# if we've reached a terminal state
-		# update alpha and return terminal value
-		if next_moves == []:
-			term_val = eval_func(next_state, next_color)
-			alpha = max(alpha, term_val)
-			return term_val
-
-		# find next action with max utility
-		v = -99999
-		for mv in next_moves:
-			mvValue = _alpha_beta_value(mv, next_state, alpha, beta, depth, next_color, true_color, true_depth, eval_func)
-			v = max(v, mvValue)
-			# prune if value is great enough
-		if v > beta:
-		  return v
-		alpha = max(alpha, v)
-		return v
-
-	# if opponent is to move
-	else:
-		# if we've reached a terminal state
-		# return terminal value without updating alpha/beta
-		if next_moves == []:
-			term_val = eval_func(next_state, next_color)
-			return term_val
-
-		# find next action with min utility
-		v = 99999
-		for mv in next_moves:
-			mvValue = _alpha_beta_value(mv, next_state, alpha, beta, depth, next_color, true_color, true_depth, eval_func)
-			v = min(v, mvValue)
-			#prune if value is small enough
-			if v < alpha:
-				return v
-			beta = min(beta, v)
-		return v
+copy_reg.pickle(types.MethodType, _pickle_method)
 
 
 class AlphaBetaAgent(Agent):
-	def get_move(self, game_state):
+	def get_move(self, game_state, return_value=True):
 		"""
 		Return minimax move using self.depth, self.eval_func, and alpha-beta pruning.
 		"""
@@ -105,14 +51,12 @@ class AlphaBetaAgent(Agent):
 		if len(moves) == 0:
 			return None
 
-
-		get_ab_value = partial(_alpha_beta_value, game_state=game_state, 
+		get_ab_value = partial( self._alpha_beta_value, game_state=game_state, 
 								alpha=-99999, beta=99999, depth=0, 
-								color=self.color, true_color=self.color, 
-								true_depth=self.depth, eval_func=self.eval_func)
+								color=self.color)
 
-		# perform alpha-beta pruning in parallel across 8 processes
-		p = Pool(8)
+		# perform alpha-beta pruning in parallel
+		p = Pool(1)
 		values = p.map(get_ab_value, moves)
 		p.terminate()
 
@@ -126,5 +70,73 @@ class AlphaBetaAgent(Agent):
 			if v == best_val:
 				best_actions.append(k)
 
-		return random.sample(best_actions, 1)[0]
+		best_action = random.sample(best_actions, 1)[0]
+
+		if return_value:
+			return (best_action, best_val)
+		else:
+			return best_action
+
+	def _alpha_beta_value(self, move, game_state, alpha, beta, depth, color):
+		"""
+		Helper function for performing alpha-beta pruning.
+		"""
+		# get next game state
+		next_state = game_state.generate_successor(move)
+
+		# has agent won?
+		if next_state.is_game_over():
+			return 99999
+
+		# does agent move next?
+		next_color = not color
+
+		# has max depth been reached?
+		if depth == self.depth:
+			return self.eval_func(next_state, color)
+
+		# get information about next state
+		next_moves = next_state.get_legal_moves()
+
+		# if this agent is to move
+		if next_color == self.color: 
+			# increment depth
+			depth += 1
+
+		# if we've reached a terminal state
+		# update alpha and return terminal value
+		if next_moves == []:
+			term_val = self.eval_func(next_state, next_color)
+			alpha = max(alpha, term_val)
+			return term_val
+
+			# find next action with max utility
+			v = -99999
+			for mv in next_moves:
+				mvValue = self._alpha_beta_value(mv, next_state, alpha, beta, depth, next_color)
+				v = max(v, mvValue)
+				# prune if value is great enough
+				if v > beta:
+					return v
+				alpha = max(alpha, v)
+			return v
+
+		# if opponent is to move
+		else:
+			# if we've reached a terminal state
+			# return terminal value without updating alpha/beta
+			if next_moves == []:
+				term_val = self.eval_func(next_state, next_color)
+				return term_val
+
+			# find next action with min utility
+			v = 99999
+			for mv in next_moves:
+				mvValue = self._alpha_beta_value(mv, next_state, alpha, beta, depth, next_color)
+				v = min(v, mvValue)
+				# prune if value is small enough
+				if v < alpha:
+					return v
+				beta = min(beta, v)
+			return v
 
