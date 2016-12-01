@@ -39,16 +39,16 @@ class Game:
                     if winner == 0.5:
                         print "It's a draw in " + str(self.board.board.fullmove_number) + " plies.\n"
                     else:
-                        print "Agent " + str(int(winner)) + " victorious in " + str(self.board.board.fullmove_number) + " plies.\n"
+                        print "Because it's a stalemate, Agent " + str(int(winner)) + " victorious!"
                 
                 # if there are moves to be made
                 else:
                     # keep track of moves and values
                     mv, val = move_val_pair
                     position_values.append(val)
-                    moves_made.append(mv)
-                        
-                    # make move
+                    if self.board.is_seventyfive_moves():
+                        outer_break = True
+                        print "It's a draw due to 75 moves."
                     self.board.move(mv)
 
                     # print board 
@@ -59,7 +59,6 @@ class Game:
                     # switch players
                     turn = not turn
 
-                    # check for end of game conditions
                     if self.board.is_game_over():
                         print "Agent " + str(turn + 1) + " victorious in " + str(self.board.board.fullmove_number) + " plies.\n"
                         outer_break = True
@@ -75,17 +74,19 @@ class Game:
         return position_values, moves_made
 
 # example run with softmax
-# sm_model = softmax.Softmax(10000, 1000, 0.01)
-# sm_model.train(print_accuracy=True)
+sm_model = softmax.Softmax(3000, 1000, 0.01)
+sm_model.train(print_accuracy=True)
 
-# sm_eval = evaluation.SoftmaxEval(sm_model)
-# eval1 = sm_eval.softmax_eval
-# eval2 = sm_eval.softmax_eval
-
-weighted_counter = evaluation.WeightedPieceCount()
-
-a1 = chess_agents.AlphaBetaAgent(color=chess.WHITE, eval_func=weighted_counter.weighted_piece_count, depth='1')
-a2 = chess_agents.AlphaBetaAgent(color=chess.BLACK, eval_func=weighted_counter.weighted_piece_count, depth='1')
+sm_eval = evaluation.SoftmaxEval(sm_model)
+eval1 = sm_eval.softmax_eval
+eval2 = sm_eval.softmax_eval
+#
+# weighted_counter = evaluation.WeightedPieceCount()
+#
+a1 = chess_agents.AlphaBetaAgent(color=chess.WHITE, eval_func=eval1, depth='1')
+a2 = chess_agents.AlphaBetaAgent(color=chess.BLACK, eval_func=eval2, depth='1')
+# a1 = chess_agents.AlphaBetaAgent(color=chess.WHITE, eval_func=weighted_counter.weighted_piece_count, depth='1')
+# a2 = chess_agents.AlphaBetaAgent(color=chess.BLACK, eval_func=weighted_counter.weighted_piece_count, depth='1')
 board = losing_board.LosingBoard(no_kings=False)
 
 game = Game(board, a1, a2)

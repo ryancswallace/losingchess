@@ -32,15 +32,12 @@ class AntiPawn:
 
 class WeightedPieceCountWCaptures:
     def captures_present(self, game_state, color):
-        # for all pieces
-        pieces = game_state.piece_counts
-        for piece in pieces[color]:
-            # look at all moves
-            legal_moves = game_state.get_legal_moves()
-            for mv in legal_moves:
-                # check if any move captures
-                if game_state.board.piece_at(mv.to_square):
-                    return True
+        # for all legal moves
+        legal_moves = game_state.get_legal_moves()
+        for mv in legal_moves:
+            # check if any move captures
+            if game_state.board.piece_at(mv.to_square):
+                return True
         return False
 
     def weighted_piece_count_w_captures(self, game_state, color):        
@@ -71,10 +68,8 @@ class SoftmaxEval:
         # define model with weights and biases calculated
         self.y = tf.nn.softmax(tf.matmul(self.x, W) + b)
 
-
     def softmax_eval(self, game_state, color):
         board_vector = vectorize.piece_vector(game_state.board)
-        print game_state.board
 
         # predict new board
         predict = tf.argmax(self.y,1)

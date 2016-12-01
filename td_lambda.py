@@ -71,7 +71,7 @@ class TDLeafLambda:
 					a2 = chess_agents.AlphaBetaAgent(color=chess.BLACK, eval_func=eval2, depth='1')
 
 					training_game = game.Game(training_board, a1, a2)
-					position_scores = training_game.play(num_training_turns)
+					position_scores = training_game.play(self.num_training_turns)
 
 					# calculate weight updates
 					for time in range(num):

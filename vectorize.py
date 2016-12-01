@@ -35,10 +35,10 @@ def square_vector(board):
             out_vec.append(12)
     
     # castling rights
-    out_vec.append(1) if board.has_kingside_castling_rights(chess.WHITE) else out_vec.append(0)
-    out_vec.append(1) if board.has_kingside_castling_rights(chess.BLACK) else out_vec.append(0)
-    out_vec.append(1) if board.has_queenside_castling_rights(chess.WHITE) else out_vec.append(0)
-    out_vec.append(1) if board.has_queenside_castling_rights(chess.BLACK) else out_vec.append(0)
+    # out_vec.append(1) if board.has_kingside_castling_rights(chess.WHITE) else out_vec.append(0)
+    # out_vec.append(1) if board.has_kingside_castling_rights(chess.BLACK) else out_vec.append(0)
+    # out_vec.append(1) if board.has_queenside_castling_rights(chess.WHITE) else out_vec.append(0)
+    # out_vec.append(1) if board.has_queenside_castling_rights(chess.BLACK) else out_vec.append(0)
 
     # en passant rights
     if board.has_legal_en_passant():
@@ -154,10 +154,10 @@ def piece_vector(board):
     out_vec += black_counts
 
     # castling rights
-    out_vec.append(1) if board.has_kingside_castling_rights(chess.WHITE) else out_vec.append(0)
-    out_vec.append(1) if board.has_kingside_castling_rights(chess.BLACK) else out_vec.append(0)
-    out_vec.append(1) if board.has_queenside_castling_rights(chess.WHITE) else out_vec.append(0)
-    out_vec.append(1) if board.has_queenside_castling_rights(chess.BLACK) else out_vec.append(0)
+    # out_vec.append(1) if board.has_kingside_castling_rights(chess.WHITE) else out_vec.append(0)
+    # out_vec.append(1) if board.has_kingside_castling_rights(chess.BLACK) else out_vec.append(0)
+    # out_vec.append(1) if board.has_queenside_castling_rights(chess.WHITE) else out_vec.append(0)
+    # out_vec.append(1) if board.has_queenside_castling_rights(chess.BLACK) else out_vec.append(0)
 
     # en passant rights
     if board.has_legal_en_passant():
