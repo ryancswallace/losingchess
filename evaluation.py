@@ -75,8 +75,41 @@ class SoftmaxEval:
         predict = tf.argmax(self.y,1)
         x_np = np.array(board_vector).reshape(1,len(board_vector))
         pred = self.sess.run(predict, feed_dict={self.x: x_np})[0]
-        print pred
         if color == chess.WHITE:
             return pred
         else:
             return 2 - pred
+
+class TDTrainEval:
+    def __init__(self, model):
+        self.model = model
+        if self.model.W is None or self.model.b is None:
+            raise Exception('Train softmax first.')
+
+        # tensor for board_vector
+        self.x = tf.placeholder(tf.float32, [1, self.model.vector_len])
+
+        # the weight matrix and bias vector
+        W = tf.constant(self.model.W, dtype=tf.float32)
+        b = tf.constant(self.model.b, dtype=tf.float32)
+
+        self.sess = tf.InteractiveSession()
+        
+        # initialize variables
+        self.sess.run(tf.global_variables_initializer())
+
+        # define model with weights and biases calculated
+        self.y = tf.nn.softmax(tf.matmul(self.x, W) + b)
+
+    def eval(self, game_state, color):
+        board_vector = vectorize.piece_vector(game_state.board)
+
+        # predict new board
+        predict = tf.argmax(self.y,1)
+        x_np = np.array(board_vector).reshape(1,len(board_vector))
+        pred = self.sess.run(predict, feed_dict={self.x: x_np})[0]
+        if color == chess.WHITE:
+            return pred
+        else:
+            # TODO: fix this
+            return -pred

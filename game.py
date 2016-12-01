@@ -44,11 +44,12 @@ class Game:
                 
                 # if there are moves to be made
                 else:
-                    # make move and keep track of board and values
+                    # make move and if agent 1 keep track of board and values
                     mv, val = move_val_pair
                     self.board.move(mv)
-                    position_values.append(val)
-                    board_vectors.append(vectorize.piece_vector(self.board))
+                    if agent == self.a1:
+                        position_values.append(val)
+                        board_vectors.append(vectorize.piece_vector(self.board))
 
                     # print board 
                     print "Agent " + str(turn + 1) + " makes move: "+ str(mv)
