@@ -6,6 +6,8 @@ class Agent:
         self.color = color
         self.eval_func = eval_func
         self.depth = int(depth) - 1
+        if self.depth < 0:
+            raise Exception("Depth must be >= 0")
 
     def get_move(self, game_state):
         raise Exception("Undefined!")
@@ -26,16 +28,10 @@ class AlphaBetaAgent(Agent):
         """
         Return minimax move using self.depth, self.eval_func, and alpha-beta pruning.
         """
-
         moves = game_state.get_legal_moves()
 
         if len(moves) == 0:
             return None
-
-
-        #p = .1     # with probability p, choose random action
-        #if random.uniform(0,1) < p:
-        #   return random.sample(moves, 1)[0]
 
         values = {}
         alpha = -99999
@@ -98,7 +94,7 @@ class AlphaBetaAgent(Agent):
                 v = max(v, mvValue)
                 # prune if value is great enough
             if v > beta:
-              return v
+                return v
             alpha = max(alpha, v)
             return v
 

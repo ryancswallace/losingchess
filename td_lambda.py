@@ -74,7 +74,8 @@ class TDLeafLambda:
 					position_scores = training_game.play(num_training_turns)
 
 					# calculate weight updates
-					for time in range(num)
+					for time in range(num):
+						J
 
 
 			# convert evaluated tensors to np arrays

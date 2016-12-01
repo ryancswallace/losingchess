@@ -95,6 +95,25 @@ class LosingBoard:
                 return True
         return False
 
+    def winner_by_pieces(self):
+        """
+        Return chess.WHITE if white has fewer peices, chess.BLACK if black has fewer, 0.5 if same
+        """
+        num_white = 0
+        num_black = 0
+        for piece_type in [chess.PAWN, chess.ROOK, chess.BISHOP, chess.QUEEN, chess.KING, chess.KNIGHT]:
+            num_white += len(self.board.pieces(piece_type, chess.WHITE))
+            num_black += len(self.board.pieces(piece_type, chess.BLACK))
+
+        if num_white < num_black:
+            return chess.WHITE
+        elif num_white > num_black:
+            return chess.BLACK
+        elif num_white == num_black:
+            return 0.5
+        else:
+            raise Exception('Impossible.')
+
     def piece_at(self, square):
         return self.board.piece_at(square)
 

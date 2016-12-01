@@ -34,8 +34,12 @@ class Game:
                 
                 # if there are no moves to be made
                 if move_val_pair is None:
-                    print "It's a draw in " + str(self.board.board.fullmove_number) + " plies.\n"
                     outer_break = True
+                    winner = self.board.winner_by_pieces()
+                    if winner == 0.5:
+                        print "It's a draw in " + str(self.board.board.fullmove_number) + " plies.\n"
+                    else:
+                        print "Agent " + str(int(winner)) + " victorious in " + str(self.board.board.fullmove_number) + " plies.\n"
                 
                 # if there are moves to be made
                 else:
