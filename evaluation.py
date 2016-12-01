@@ -43,7 +43,7 @@ class WeightedPieceCountWCaptures:
                     return True
         return False
 
-    def weighted_piece_count_w_captures(self, game_state, color):
+    def weighted_piece_count_w_captures(self, game_state, color):        
         weighted_piece_counter = WeightedPieceCount()
         if self.captures_present(game_state, color):
             return weighted_piece_counter.weighted_piece_count(game_state, color) - 5
@@ -74,13 +74,14 @@ class SoftmaxEval:
 
     def softmax_eval(self, game_state, color):
         board_vector = vectorize.piece_vector(game_state.board)
+        print game_state.board
 
         # predict new board
         predict = tf.argmax(self.y,1)
         x_np = np.array(board_vector).reshape(1,len(board_vector))
         pred = self.sess.run(predict, feed_dict={self.x: x_np})[0]
         print pred
-    	if color == chess.WHITE:
-    		return pred
-    	else:
-    		return 1 - pred
+        if color == chess.WHITE:
+            return pred
+        else:
+            return 2 - pred
