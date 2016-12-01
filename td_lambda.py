@@ -60,10 +60,12 @@ class TDLeafLambda:
 			# for each training iteration
 			for training_iteration in range(self.num_training_iterations):
 				# define evaluation functions using current weights
-				eval1 = None
-				eval2 = None
+				eval1 = TODO
+				eval2 = TODO
 				
 				training_boards = random.sample(all_training_boards, self.num_sample_positions)
+				all_discounted_error_vectors = []
+				all_positions_vectors = []
 				# for all randomly selected boards
 				for training_board in training_boards:
 					# play game, getting position scores
@@ -71,11 +73,36 @@ class TDLeafLambda:
 					a2 = chess_agents.AlphaBetaAgent(color=chess.BLACK, eval_func=eval2, depth='1')
 
 					training_game = game.Game(training_board, a1, a2)
-					position_scores = training_game.play(self.num_training_turns)
+					position_values, positions_vector = training_game.play(self.num_training_turns)
 
-					# calculate weight updates
-					for time in range(num):
-						J
+					all_positions_vectors.append(positions_vector)
+					score_changes = [0] + [position_values[i+1] - position_values[i] for i in (range(position_values) - 1)]
+					all_discounted_error_vectors.append([error * (self.lambda_discount ** t) for t, error in enumerate(score_changes)])
+				
+				for i in range(len(training_board)):
+					# get list of position vectors and discounted errors for this game
+					positions_vector = all_positions_vectors[i]
+					discounted_error_vector = all_discounted_error_vectors[i]
+					
+					update_vector = None
+					# for each time frame in the game
+					for time in range(self.num_training_turns):
+						# calculate the gradient of the L1 loss function with respect to 
+						# connection weights and biases of the neural network
+						gradient = TODO # delta J(positions_vector[time], W)
+
+						total_error = sum(discounted_error_vector[time:(self.num_training_turns)])
+
+						if update_vector is None:
+							update_vector = gradient * total_error
+						else:
+							update_vector += gradient * total_error
+
+					# scale update vector by learning rate
+					update_vector = self.learning_rate * update_vector
+
+					# update weights and biases
+					TODO # W = W + update_vector; b = b + update_vector
 
 
 			# convert evaluated tensors to np arrays

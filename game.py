@@ -4,6 +4,7 @@ import losing_board
 import chess_agents
 import softmax
 import evaluation
+import vectorize
 
 """
 Here we will build the processes that drive games between two AIs,
@@ -20,7 +21,7 @@ class Game:
 
     def play(self, max_turns=None):
         position_values = []
-        moves_made = []
+        board_vectors = []
         while True:
             outer_break = False
             turn = False
@@ -43,13 +44,11 @@ class Game:
                 
                 # if there are moves to be made
                 else:
-                    # keep track of moves and values
+                    # make move and keep track of board and values
                     mv, val = move_val_pair
-                    position_values.append(val)
-                    if self.board.is_seventyfive_moves():
-                        outer_break = True
-                        print "It's a draw due to 75 moves."
                     self.board.move(mv)
+                    position_values.append(val)
+                    board_vectors.append(vectorize.piece_vector(self.board))
 
                     # print board 
                     print "Agent " + str(turn + 1) + " makes move: "+ str(mv)
@@ -58,6 +57,10 @@ class Game:
 
                     # switch players
                     turn = not turn
+
+                    if self.board.is_seventyfive_moves():
+                        outer_break = True
+                        print "It's a draw due to 75 moves."
 
                     if self.board.is_game_over():
                         print "Agent " + str(turn + 1) + " victorious in " + str(self.board.board.fullmove_number) + " plies.\n"
@@ -71,7 +74,7 @@ class Game:
             if outer_break: 
                 break
 
-        return position_values, moves_made
+        return position_values, board_vectors
 
 # example run with softmax
 sm_model = softmax.Softmax(3000, 1000, 0.01)
