@@ -20,7 +20,7 @@ class Game:
 
     def play(self, max_turns=None):
         position_values = []
-        turn_num = 0
+        moves_made = []
         while True:
             outer_break = False
             turn = False
@@ -43,39 +43,65 @@ class Game:
                         print "Because it's a stalemate, Agent " + str(turn + 1) + " victorious!"
                         break
                 self.board.move(mv)
+                # TODO deleted outer break from ryan branch
 
-
-                print "Agent " + str(turn + 1) + " makes move: "+ str(mv)
-                print self.board
-                print
-
-                turn = not turn
-
-                if self.board.is_game_over():
-                    print
-                    print "Agent " + str(turn + 1) + " victorious in " + str(self.board.board.fullmove_number) + " plies."
-                    print
+                # agent finds best move
+                move_val_pair = agent.get_move(self.board, return_value=True)
+                
+                # if there are no moves to be made
+                if move_val_pair is None:
+                    print "It's a draw in " + str(self.board.board.fullmove_number) + " plies.\n"
                     outer_break = True
-                    break
+                
+                # if there are moves to be made
+                else:
+                    # keep track of moves and values
+                    mv, val = move_val_pair
+                    position_values.append(val)
+                    moves_made.append(mv)
+                        
+                    # make move
+                    self.board.move(mv)
 
-            if outer_break: break
+                    # print board 
+                    print "Agent " + str(turn + 1) + " makes move: "+ str(mv)
+                    print self.board
+                    print '\n'
 
-            turn_num += 1
-            if max_turns != None:
-                if 2 * turn_num >= max_turns: break
+                    # switch players
+                    turn = not turn
 
-        return position_values
+                    if self.board.is_game_over():
+                        print
+                        print "Agent " + str(turn + 1) + " victorious in " + str(self.board.board.fullmove_number) + " plies."
+                        print
+                        outer_break = True
+                        break
+
+            # update turn numbers
+            if max_turns != None and self.board.board.fullmove_number >= max_turns: 
+                outer_break = True
+
+            # check that game didn't end on last move
+            if outer_break: 
+                break
+
+        return position_values, moves_made
 
 # example run with softmax
-sm_model = softmax.Softmax(1000, 3000, 0.01)
-sm_model.train(print_accuracy=False)
+sm_model = softmax.Softmax(3000, 1000, 0.01)
+sm_model.train(print_accuracy=True)
 
 sm_eval = evaluation.SoftmaxEval(sm_model)
 eval1 = sm_eval.softmax_eval
 eval2 = sm_eval.softmax_eval
 
+weighted_counter = evaluation.WeightedPieceCount()
+
 a1 = chess_agents.AlphaBetaAgent(color=chess.WHITE, eval_func=eval1, depth='0')
 a2 = chess_agents.AlphaBetaAgent(color=chess.BLACK, eval_func=eval2, depth='0')
+# a1 = chess_agents.AlphaBetaAgent(color=chess.WHITE, eval_func=weighted_counter.weighted_piece_count, depth='1')
+# a2 = chess_agents.AlphaBetaAgent(color=chess.BLACK, eval_func=weighted_counter.weighted_piece_count, depth='1')
 board = losing_board.LosingBoard(no_kings=False)
 
 game = Game(board, a1, a2)
