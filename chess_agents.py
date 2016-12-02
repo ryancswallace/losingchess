@@ -29,13 +29,18 @@ class RandomAgent(Agent):
 
 
 """
-necessary code for running a class method in parallel that I don't yet understand.
+Necessary code for running a class method in parallel.
+Essentially, tells python how to convert a method that is built into a class 
+to a standalone binary file (since this is necessary for multiprocesing).
+
+citation: dano, http://stackoverflow.com/questions/25156768
+		  /cant-pickle-type-instancemethod-using-pythons-multiprocessing-pool-apply-a
 """
 def _pickle_method(m):
-    if m.im_self is None:
-        return getattr, (m.im_class, m.im_func.func_name)
-    else:
-        return getattr, (m.im_self, m.im_func.func_name)
+	if m.im_self is None:
+		return getattr, (m.im_class, m.im_func.func_name)
+	else:
+		return getattr, (m.im_self, m.im_func.func_name)
 
 copy_reg.pickle(types.MethodType, _pickle_method)
 
@@ -50,13 +55,15 @@ class AlphaBetaAgent(Agent):
 
 		if len(moves) == 0:
 			return None
+		if len(moves) == 1:
+			return moves[0], self.eval_func(game_state.generate_successor(moves[0]), self.color)
 
 		get_ab_value = partial( self._alpha_beta_value, game_state=game_state, 
 								alpha=-99999, beta=99999, depth=0, 
 								color=self.color)
 
 		# perform alpha-beta pruning in parallel
-		p = Pool(1)
+		p = Pool(8)
 		values = p.map(get_ab_value, moves)
 		p.terminate()
 
