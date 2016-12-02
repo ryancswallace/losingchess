@@ -1,7 +1,6 @@
 import chess
 import tensorflow as tf
 import numpy as np
-
 import vectorize
 
 """
@@ -17,12 +16,15 @@ naive_weights = {chess.PAWN: 1,
                  chess.QUEEN: 6}
 
 class WeightedPieceCount:
+    def __init__(self, weights=naive_weights):
+        self.weights = weights
+
     def weighted_piece_count(self, game_state, color):
         pieces = game_state.piece_counts
 
         tot = 0
         for k in pieces[color]:
-            tot += (pieces[color][k] - pieces[not color][k])*naive_weights[k]
+            tot -= pieces[color][k]*self.weights[k]
 
         return tot
 
