@@ -29,7 +29,6 @@ class AlphaBetaAgent(Agent):
         Return minimax move using self.depth, self.eval_func, and alpha-beta pruning.
         """
         moves = game_state.get_legal_moves()
-
         if len(moves) == 0:
             return None
 

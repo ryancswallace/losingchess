@@ -77,21 +77,21 @@ class Game:
 
         return position_values, board_vectors
 
-# example run with softmax
-sm_model = softmax.Softmax(3000, 1000, 0.01)
-sm_model.train(print_accuracy=True)
+# # example run with softmax
+# sm_model = softmax.Softmax(3000, 1000, 0.01)
+# sm_model.train(print_accuracy=True)
 
-sm_eval = evaluation.SoftmaxEval(sm_model)
-eval1 = sm_eval.softmax_eval
-eval2 = sm_eval.softmax_eval
-#
-# weighted_counter = evaluation.WeightedPieceCount()
-#
-a1 = chess_agents.AlphaBetaAgent(color=chess.WHITE, eval_func=eval1, depth='1')
-a2 = chess_agents.AlphaBetaAgent(color=chess.BLACK, eval_func=eval2, depth='1')
-# a1 = chess_agents.AlphaBetaAgent(color=chess.WHITE, eval_func=weighted_counter.weighted_piece_count, depth='1')
-# a2 = chess_agents.AlphaBetaAgent(color=chess.BLACK, eval_func=weighted_counter.weighted_piece_count, depth='1')
-board = losing_board.LosingBoard(no_kings=False)
+# sm_eval = evaluation.SoftmaxEval(sm_model)
+# eval1 = sm_eval.softmax_eval
+# eval2 = sm_eval.softmax_eval
+# #
+# # weighted_counter = evaluation.WeightedPieceCount()
+# #
+# a1 = chess_agents.AlphaBetaAgent(color=chess.WHITE, eval_func=eval1, depth='1')
+# a2 = chess_agents.AlphaBetaAgent(color=chess.BLACK, eval_func=eval2, depth='1')
+# # a1 = chess_agents.AlphaBetaAgent(color=chess.WHITE, eval_func=weighted_counter.weighted_piece_count, depth='1')
+# # a2 = chess_agents.AlphaBetaAgent(color=chess.BLACK, eval_func=weighted_counter.weighted_piece_count, depth='1')
+# board = losing_board.LosingBoard(no_kings=False)
 
-game = Game(board, a1, a2)
-game.play()
+# game = Game(board, a1, a2)
+# game.play()

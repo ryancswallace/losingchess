@@ -27,18 +27,18 @@ class TDLeafLambda:
 
     def train(self):
         all_training_boards = parse.pgn_to_boards('data/all_losing.pgn', labels=False, vectorized=False)
-        self.vector_len = len(all_training_boards[0][0])
+        self.vector_len = len(vectorize.piece_vector(all_training_boards[0]))
         # convert to losing boards
         for i, board in enumerate(all_training_boards):
-            board_fen = board.fen(promoted=True)
+            board_fen = board.fen()
             all_training_boards[i] = losing_board.LosingBoard(b_fen=board_fen)
 
             # apply random move if specified
             if self.apply_random_move:
-                legal_moves = (board).get_legal_moves()
+                legal_moves = (all_training_boards[i]).get_legal_moves()
                 if len(legal_moves) != 0:
                     move = random.sample(legal_moves, 1)[0]
-                    all_training_boards[i] = board.generate_successor(move)
+                    all_training_boards[i] = (all_training_boards[i]).generate_successor(move)
 
         # now vectorize boards
         for i, board in enumerate(all_training_boards):
@@ -55,13 +55,13 @@ class TDLeafLambda:
             # initialize variables
             sess.run(tf.global_variables_initializer())
 
-            # define evaluation functions using current weights
-            current_model = evaluation.TDTrainEval()
-            evaluator = current_model.eval
-
             # initialize parameters
             self.W = W.eval()
             self.b = b.eval()
+
+            # define evaluation functions using current weights
+            current_evaluator = evaluation.TDTrainEval(self)
+            evaluator = current_evaluator.eval
 
             # train using TD-learning
             # for each training iteration
@@ -74,19 +74,18 @@ class TDLeafLambda:
                     # play game, getting position scores
                     a1 = chess_agents.AlphaBetaAgent(color=chess.WHITE, eval_func=evaluator, depth='1')
                     a2 = chess_agents.AlphaBetaAgent(color=chess.BLACK, eval_func=evaluator, depth='1')
-
+                    
                     training_game = game.Game(training_board, a1, a2)
                     position_values, positions_vector = training_game.play(self.num_training_turns)
 
                     all_positions_vectors.append(positions_vector)
                     score_changes = [0] + [position_values[i+1] - position_values[i] for i in (range(position_values) - 1)]
                     all_discounted_error_vectors.append([error * (self.lambda_discount ** t) for t, error in enumerate(score_changes)])
-                
+
                 for i in range(self.num_sample_games):
                     # get list of position vectors and discounted errors for this game
                     positions_vector = all_positions_vectors[i]
                     discounted_error_vector = all_discounted_error_vectors[i]
-                    
                     update_vector = None
                     # for each time frame in the game
                     for time in range(self.num_training_turns):
@@ -106,8 +105,11 @@ class TDLeafLambda:
                     update_vector = self.learning_rate * update_vector
 
                     # update weights and biases
-                    self.W = map(add, W.eval(), update_vector)
-                    self.b = map(add, b.eval(), update_vector)
+                    self.W = map(add, self.W, update_vector)
+                    self.b = map(add, self.b, update_vector)
+                    print self.W
+                    print self.b
+
 
 trainer = TDLeafLambda(3, 10, 0.5, 0.7, 12, True)
 trainer.train()

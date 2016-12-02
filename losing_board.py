@@ -35,7 +35,6 @@ class LosingBoard:
                              for color in [chess.WHITE, chess.BLACK]
                             }
 
-
     def get_legal_moves(self):
         """
         Return list of all legal moves for a color given the current gamestate.
@@ -61,7 +60,6 @@ class LosingBoard:
             # take out castling moves
             out_moves = [move for move in list(chess_legal_moves) if not self.board.is_castling(move)]
             return out_moves
-
 
     def move(self, mv):
         """

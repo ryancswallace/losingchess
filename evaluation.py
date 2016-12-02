@@ -84,7 +84,7 @@ class TDTrainEval:
     def __init__(self, model):
         self.model = model
         if self.model.W is None or self.model.b is None:
-            raise Exception('Train softmax first.')
+            raise Exception('Initialize/train model first.')
 
         # tensor for board_vector
         self.x = tf.placeholder(tf.float32, [1, self.model.vector_len])
@@ -108,6 +108,7 @@ class TDTrainEval:
         predict = tf.argmax(self.y,1)
         x_np = np.array(board_vector).reshape(1,len(board_vector))
         pred = self.sess.run(predict, feed_dict={self.x: x_np})[0]
+
         if color == chess.WHITE:
             return pred
         else:
