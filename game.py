@@ -1,5 +1,4 @@
 import chess
-
 import losing_board
 import chess_agents
 import softmax
@@ -14,18 +13,24 @@ evaluation functions, number of AIs, a la Berkeley.
 """
 
 class Game:
-    def __init__(self, board, a1, a2):
+    def __init__(self, board, a1, a2, get_stats=False):
         self.board = board
-        self.a1 = a1
-        self.a2 = a2
 
-    def play(self, max_turns=None):
+        # ensure that a1 always goes first
+        a1.color = chess.WHITE
+        a2.color = chess.BLACK
+
+        self.order = [a1, a2]
+
+        self.get_stats = get_stats
+
+    def play(self, max_turns=None, verbose=True):
         position_values = []
         moves_made = []
         while True:
             outer_break = False
-            turn = False
-            for agent in [self.a1,self.a2]:
+            color = chess.WHITE
+            for agent in self.order:
                 # check that game didn't end on last half-move
                 if outer_break:
                     break
@@ -36,6 +41,8 @@ class Game:
                 # if there are no moves to be made
                 if move_val_pair is None:
                     print "It's a draw in " + str(self.board.board.fullmove_number) + " plies.\n"
+                    if self.get_stats:
+                        return None, self.board.board.fullmove_number
                     outer_break = True
                 
                 # if there are moves to be made
@@ -48,17 +55,18 @@ class Game:
                     # make move
                     self.board.move(mv)
 
-                    # print board 
-                    print "Agent " + str(turn + 1) + " makes move: "+ str(mv)
-                    print self.board
-                    print '\n'
+                    if verbose:
+                        # print board 
+                        print "Agent " + str((1 - color) + 1) + " makes move: "+ str(mv)
+                        print self.board
+                        print '\n'
 
                     # switch players
-                    turn = not turn
+                    color = not color
 
                     # check for end of game conditions
                     if self.board.is_game_over():
-                        print "Agent " + str(turn + 1) + " victorious in " + str(self.board.board.fullmove_number) + " plies.\n"
+                        print "Agent " + str((1 - color) + 1) + " victorious in " + str(self.board.board.fullmove_number) + " plies.\n"
                         outer_break = True
 
             # update turn numbers
@@ -69,7 +77,11 @@ class Game:
             if outer_break: 
                 break
 
-        return position_values, moves_made
+        if self.get_stats:
+            return color, self.board.board.fullmove_number
+        else:
+            return position_values, moves_made
+
 
 # example run with softmax
 # sm_model = softmax.Softmax(10000, 1000, 0.01)
@@ -79,11 +91,20 @@ class Game:
 # eval1 = sm_eval.softmax_eval
 # eval2 = sm_eval.softmax_eval
 
-weighted_counter = evaluation.WeightedPieceCount()
+if __name__ == "__main__":
 
-a1 = chess_agents.AlphaBetaAgent(color=chess.WHITE, eval_func=weighted_counter.weighted_piece_count, depth='1')
-a2 = chess_agents.AlphaBetaAgent(color=chess.BLACK, eval_func=weighted_counter.weighted_piece_count, depth='1')
-board = losing_board.LosingBoard(no_kings=False)
+    anti_pawn = evaluation.AntiPawn()
+    counter1 = evaluation.WeightedPieceCount()
+    counter2 = evaluation.WeightedPieceCount(weights={chess.PAWN: 6,
+                 chess.KING: 5,
+                 chess.KNIGHT: 3,
+                 chess.BISHOP: 3,
+                 chess.ROOK: 2,
+                 chess.QUEEN: 1})
 
-game = Game(board, a1, a2)
-game.play()
+    a1 = chess_agents.AlphaBetaAgent(color=chess.BLACK, eval_func=counter1.weighted_piece_count, depth='1')
+    a2 = chess_agents.AlphaBetaAgent(color=chess.WHITE, eval_func=counter2.weighted_piece_count, depth='1')
+    board = losing_board.LosingBoard(no_kings=False)
+
+    game = Game(board, a2, a1)
+    game.play()
