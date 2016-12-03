@@ -41,8 +41,9 @@ class TDLeafLambda:
                     all_training_boards[i] = (all_training_boards[i]).generate_successor(move)
 
         # now vectorize boards
+        all_vectorized_training_boards = []
         for i, board in enumerate(all_training_boards):
-            all_training_boards[i] = vectorize.piece_vector(board)
+            all_vectorized_training_boards.append(vectorize.piece_vector(board))
 
         # holders for training board vectors
         x = tf.placeholder(tf.float32, [None, self.vector_len])
@@ -51,67 +52,72 @@ class TDLeafLambda:
         W = tf.Variable(tf.random_uniform([self.vector_len, 1],0,0.01))
         b = tf.Variable(tf.random_uniform([1],0,0.01))
 
-        with tf.Session() as sess:
-            # initialize variables
-            sess.run(tf.global_variables_initializer())
+        sess = tf.InteractiveSession()
+        # initialize variables
+        sess.run(tf.global_variables_initializer())
 
-            # initialize parameters
-            self.W = W.eval()
-            self.b = b.eval()
+        # initialize parameters
+        self.W = W.eval()
+        self.b = b.eval()
 
-            # define evaluation functions using current weights
-            current_evaluator = evaluation.TDTrainEval(self)
-            evaluator = current_evaluator.eval
+        sess.close()
 
-            # train using TD-learning
-            # for each training iteration
-            for training_iteration in range(self.num_training_iterations):      
-                training_boards = random.sample(all_training_boards, self.num_sample_games)
-                all_discounted_error_vectors = []
-                all_positions_vectors = []
-                # for all randomly selected boards
-                for training_board in training_boards:
-                    # play game, getting position scores
-                    a1 = chess_agents.AlphaBetaAgent(color=chess.WHITE, eval_func=evaluator, depth='1')
-                    a2 = chess_agents.AlphaBetaAgent(color=chess.BLACK, eval_func=evaluator, depth='1')
-                    
-                    training_game = game.Game(training_board, a1, a2)
-                    print 'before play'
-                    position_values, positions_vector = training_game.play(self.num_training_turns)
-                    print 'after play'
+        # define evaluation functions using current weights
+        current_evaluator = evaluation.TDTrainEval(self)
+        evaluator = current_evaluator.eval
+        
+        # train using TD-learning
+        # for each training iteration
+        for training_iteration in range(self.num_training_iterations):      
+            training_boards = random.sample(all_training_boards, self.num_sample_games)
+            all_discounted_error_vectors = []
+            all_positions_vectors = []
 
-                    all_positions_vectors.append(positions_vector)
-                    score_changes = [0] + [position_values[i+1] - position_values[i] for i in (range(position_values) - 1)]
-                    all_discounted_error_vectors.append([error * (self.lambda_discount ** t) for t, error in enumerate(score_changes)])
+            # for all randomly selected boards
+            for training_board in training_boards:
+                # play game, getting position scores
+                a1 = chess_agents.AlphaBetaAgent(color=chess.WHITE, eval_func=evaluator, depth='1')
+                a2 = chess_agents.AlphaBetaAgent(color=chess.BLACK, eval_func=evaluator, depth='1')
+                
+                training_game = game.Game(training_board, a1, a2)
+                position_values, positions_vector = training_game.play(self.num_training_turns)
 
-                for i in range(self.num_sample_games):
-                    # get list of position vectors and discounted errors for this game
-                    positions_vector = all_positions_vectors[i]
-                    discounted_error_vector = all_discounted_error_vectors[i]
-                    update_vector = None
-                    # for each time frame in the game
-                    for time in range(self.num_training_turns):
-                        # calculate the gradient of the L1 loss function with respect to 
-                        # connection weights and biases of the neural network
-                        gradient = tf.gradients(evaluator, [x])
-                        gradient_val = sess.run(gradient, feed_dict={x: np.array(positions_vector[time])})
+                all_positions_vectors.append(positions_vector)
+                score_changes = [0] + [position_values[i+1] - position_values[i] for i in range(len(position_values) - 1)]
+                all_discounted_error_vectors.append([error * (self.lambda_discount ** t) for t, error in enumerate(score_changes)])
 
-                        total_error = sum(discounted_error_vector[time:(self.num_training_turns)])
+            for i in range(self.num_sample_games):
+                # get list of position vectors and discounted errors for this game
+                positions_vector = all_positions_vectors[i]
+                discounted_error_vector = all_discounted_error_vectors[i]
+                update_vector = None
+                # for each time frame in the game
+                for time in range(self.num_training_turns):
+                    # calculate the gradient of the L1 loss function with respect to 
+                    # connection weights and biases of the neural network
+                    gradient = tf.gradients(evaluator, [x])
 
-                        if update_vector is None:
-                            update_vector = gradient_val * total_error
-                        else:
-                            update_vector += gradient_val * total_error
+                    sess = tf.InteractiveSession()
+                    gradient_val = sess.run(gradient, feed_dict={x: np.array(positions_vector[time])})
 
-                    # scale update vector by learning rate
-                    update_vector = self.learning_rate * update_vector
+                    total_error = sum(discounted_error_vector[time:(self.num_training_turns)])
 
-                    # update weights and biases
-                    self.W = map(add, self.W, update_vector)
-                    self.b = map(add, self.b, update_vector)
-                    print self.W
-                    print self.b
+                    if update_vector is None:
+                        update_vector = gradient_val * total_error
+                    else:
+                        update_vector += gradient_val * total_error
+
+                    sess.close()
+
+                # scale update vector by learning rate
+                update_vector = self.learning_rate * update_vector
+
+                # update weights and biases
+                self.W = map(add, self.W, update_vector)
+                self.b = map(add, self.b, update_vector)
+                print self.W
+                print self.b
 
 
-trainer = TDLeafLambda(3, 10, 0.5, 0.7, 12, False)
+trainer = TDLeafLambda(3, 5, 0.5, 0.7, 12, False)
 trainer.train()

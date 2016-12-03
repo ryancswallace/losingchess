@@ -40,13 +40,10 @@ class LosingBoard:
         Return list of all legal moves for a color given the current gamestate.
         Since the Board class knows whose turn it is, we need not take a color argument.
         """
-        print 'in get legal moves 1'
-
         legal_moves = []
 
         # get pseudo legal moves under normal chess rules (includes putting king into check)
         chess_legal_moves = self.board.pseudo_legal_moves
-        print 'in get legal moves 2'
         # check for attacking positions
         # if one is found, we only include attacking moves among legal moves
         attacking = False
@@ -54,7 +51,6 @@ class LosingBoard:
             if self.board.piece_at(mv.to_square):
                 legal_moves.append(mv)
                 attacking = True
-        print 'in get legal moves 3'
         if attacking:
             return legal_moves
         else:
