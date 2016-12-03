@@ -8,6 +8,7 @@ import vectorize
 
 import random
 import tensorflow as tf
+import tflearn as tfl
 
 class TDLeafLambda:
 	def __init__(self, num_training_iterations, num_sample_positions, learning_rate, lambda_discount, num_training_turns, apply_random_move):
@@ -80,3 +81,16 @@ class TDLeafLambda:
 			# convert evaluated tensors to np arrays
 			self.W = W.eval()
 			self.b = b.eval()
+
+class TDLeafLambda:
+    def __init__(self, num_training_iterations, num_sample_positions, learning_rate, lambda_discount,
+                 num_training_turns, apply_random_move):
+        self.num_training_iterations = num_training_iterations
+        self.num_sample_positions = num_sample_positions
+        self.learning_rate = learning_rate
+        self.lambda_discount = lambda_discount
+        self.num_training_turns = num_training_turns
+        self.apply_random_move = apply_random_move
+
+    def build(self):
+        input_layer = tfl.input_data
