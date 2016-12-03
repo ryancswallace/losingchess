@@ -76,7 +76,9 @@ class TDLeafLambda:
                     a2 = chess_agents.AlphaBetaAgent(color=chess.BLACK, eval_func=evaluator, depth='1')
                     
                     training_game = game.Game(training_board, a1, a2)
+                    print 'before play'
                     position_values, positions_vector = training_game.play(self.num_training_turns)
+                    print 'after play'
 
                     all_positions_vectors.append(positions_vector)
                     score_changes = [0] + [position_values[i+1] - position_values[i] for i in (range(position_values) - 1)]
@@ -111,5 +113,5 @@ class TDLeafLambda:
                     print self.b
 
 
-trainer = TDLeafLambda(3, 10, 0.5, 0.7, 12, True)
+trainer = TDLeafLambda(3, 10, 0.5, 0.7, 12, False)
 trainer.train()

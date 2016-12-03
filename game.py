@@ -1,9 +1,9 @@
-import chess
+# import chess
 
-import losing_board
-import chess_agents
-import softmax
-import evaluation
+# import losing_board
+# import chess_agents
+# import softmax
+# import evaluation
 import vectorize
 
 """
@@ -31,8 +31,10 @@ class Game:
                     break
 
                 # agent finds best move
+                # move_val_pair = agent.get_move(self.board, return_value=True)
+                print 'before getting move'
                 move_val_pair = agent.get_move(self.board, return_value=True)
-                
+                print 'after getting move'
                 # if there are no moves to be made
                 if move_val_pair is None:
                     outer_break = True
