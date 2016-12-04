@@ -2,8 +2,6 @@ import chess
 import tensorflow as tf
 import numpy as np
 
-import vectorize
-
 """
 Here we'll put our evaluation functions
 """

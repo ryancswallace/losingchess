@@ -1,18 +1,19 @@
 import parse
+import vectorize
 
 import random
 import numpy as np
 import tensorflow as tf
 
 class Softmax:
-    def __init__(self, num_training_iterations, num_sample_positions, num_data_sets, learning_rate, vectorize_method, vector_len):
+    def __init__(self, num_training_iterations, num_sample_positions, num_data_sets, learning_rate, vectorize_method):
         # parameters of training
         self.num_training_iterations = num_training_iterations
         self.num_sample_positions = num_sample_positions
         self.learning_rate = learning_rate
         self.vectorize_method = vectorize_method
         self.num_data_sets = num_data_sets
-        self.vector_len = vector_len
+        self.vector_len = vectorize.get_vector_len(vectorize_method)
 
         # the weight matrix and bias vector to be calculated
         self.W = None

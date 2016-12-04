@@ -1,4 +1,5 @@
 import chess
+import losing_board
 
 # this case handles promotions easily
 def square_vector(board):
@@ -33,7 +34,7 @@ def square_vector(board):
             out_vec.append(11)
         elif piece.symbol() == 'k':
             out_vec.append(12)
-    
+
     # en passant rights
     if board.has_legal_en_passant():
         if board_type == 'LosingBoard':
@@ -59,6 +60,9 @@ def piece_vector(board):
     piece_types = [chess.PAWN, chess.KNIGHT, chess.BISHOP, chess.ROOK, chess.QUEEN, chess.KING]
     white_counts = [0] * 6
     black_counts = [0] * 6
+
+    white_attacked = 0
+    black_attacked = 0
 
     for ptype in piece_types:
         white_set = board.pieces(ptype, chess.WHITE)
@@ -143,6 +147,18 @@ def piece_vector(board):
                 out_vec.append(k_square + 1)
             out_vec += [0] * (1 - len(black_set))
 
+        for square in white_set:
+            if board.is_attacked_by(chess.BLACK, square):
+                white_attacked += 1
+
+        for square in black_set:
+            if board.is_attacked_by(chess.WHITE, square):
+                black_attacked += 1
+
+    # number of pieces on each side under attack
+    out_vec.append(white_attacked)
+    out_vec.append(black_attacked)
+
     # promotions via piece counts
     out_vec += white_counts
     out_vec += black_counts
@@ -180,3 +196,8 @@ def piece_count_vector(board):
     # followed by the number of black pieces of each type
     out_vec = white_counts + black_counts
     return out_vec
+
+def get_vector_len(vectorize_method):
+    board = losing_board.LosingBoard()
+    vec = vectorize_method(board)
+    return len(vec)

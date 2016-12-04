@@ -23,6 +23,7 @@ def pgn_to_games(pgn_file):
 
     return games
 
+
 def pgn_to_boards(num_data_sets, labels=False, vectorize_method=None):
     num_data_sets = min(num_data_sets, 9)
 
