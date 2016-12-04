@@ -81,7 +81,7 @@ class AlphaBetaAgent(Agent):
 								color=self.color)
 
 		p = Pool(8)
-		values = p.map(get_ab_value, moves)
+		values = p.map_async(get_ab_value, moves).get(99999)
 		p.terminate()
 
 		values = {mv: v for mv, v in zip(moves, values)}
