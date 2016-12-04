@@ -1,11 +1,13 @@
 import parse
 
+import vectorize
+
 import random
 import numpy as np
 import tensorflow as tf
 
 class Mutlilayer:
-    def __init__(self, num_training_iterations, num_sample_positions, num_data_sets, learning_rate, vectorize_method, vector_len):
+    def __init__(self, num_training_iterations, num_sample_positions, num_data_sets, learning_rate, vectorize_method):
         # parameters of training
         self.num_training_iterations = num_training_iterations
         self.num_sample_positions = num_sample_positions
@@ -14,7 +16,7 @@ class Mutlilayer:
         self.vectorize_method = vectorize_method
 
         # parameters of the network
-        self.n_input = vector_len # length of feature vector
+        self.n_input = vectorize.get_vector_len(vectorize_method) # length of feature vector
         self.n_hidden_1 = 256 # 1st layer number of features
         self.n_hidden_2 = 256 # 2nd layer number of features
         self.n_classes = 3 # win, lose, draw

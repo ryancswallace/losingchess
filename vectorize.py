@@ -206,11 +206,6 @@ def piece_vector(board):
 
     return out_vec
 
-def piece_vector_len():
-    board = losing_board.LosingBoard()
-    vec = piece_vector(board)
-    return len(vec)
-
 def piece_count_vector(board):
     piece_types = [chess.PAWN, chess.KNIGHT, chess.BISHOP, chess.ROOK, chess.QUEEN, chess.KING]
     white_counts = [0] * 6
@@ -228,7 +223,7 @@ def piece_count_vector(board):
     out_vec = white_counts + black_counts
     return out_vec
 
-def piece_count_vector_len():
+def get_vector_len(vectorize_method):
     board = losing_board.LosingBoard()
-    vec = piece_count_vector(board)
+    vec = vectorize_method(board)
     return len(vec)

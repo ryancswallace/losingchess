@@ -4,6 +4,7 @@ import game
 import chess
 import chess_agents
 import evaluation
+import vectorize
 
 import random
 import numpy as np
@@ -12,7 +13,7 @@ from operator import add
 
 
 class TDLeafLambda:
-    def __init__(self, num_training_iterations, num_sample_games, num_data_sets, learning_rate, lambda_discount, num_training_turns, apply_random_move, vectorize_method, vector_len):
+    def __init__(self, num_training_iterations, num_sample_games, num_data_sets, learning_rate, lambda_discount, num_training_turns, apply_random_move, vectorize_method):
         # parameters of training
         self.num_training_iterations = num_training_iterations
         self.num_sample_games = num_sample_games
@@ -22,7 +23,7 @@ class TDLeafLambda:
         self.num_training_turns = num_training_turns
         self.apply_random_move = apply_random_move
         self.vectorize_method = vectorize_method
-        self.vector_len = vector_len
+        self.vector_len = vectorize.get_vector_len(vectorize_method)
 
         # the weight matrix and bias vector to be calculated
         self.W = None
