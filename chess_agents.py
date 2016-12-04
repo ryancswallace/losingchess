@@ -164,3 +164,85 @@ class AlphaBetaAgent(Agent):
 					return v
 				beta = min(beta, v)
 			return v
+class ExpectimaxAgent(Agent):
+    def get_move(self, game_state, return_value=False):
+        """
+        Return minimax move using self.depth, self.eval_func, and alpha-beta pruning.
+        """
+        moves = game_state.board.get_legal_moves()
+        if len(moves) == 0:
+            return None
+
+        values = {}
+        for move in moves:
+            values[move] = self.get_value(move, game_state.board, 0, self.color)
+
+        # return action with max utility,
+        # random action if there's a tie
+        best_val = max(values.values())
+        best_actions = []
+        for k, v in values.iteritems():
+            if v == best_val:
+                best_actions.append(k)
+        best_action = random.sample(best_actions, 1)[0]
+        if return_value:
+            return (best_action, best_val)
+        else:
+            return best_action
+
+    def get_value(self, move, board, depth, color):
+        """
+        Helper function for performing expectimax.
+        """
+        # get next game state
+        next_state = board.generate_successor(move)
+
+        # has agent won?
+        if next_state.is_game_over():
+            return 99999
+
+        # does agent move next?
+        next_color = not color
+
+        # has max depth been reached?
+        if depth == self.depth:
+            return self.eval_func(next_state, color)
+
+        # get information about next state
+        next_moves = next_state.get_legal_moves()
+
+        # if this agent is to move
+        if next_color == self.color: 
+
+            # increment depth
+            depth += 1
+
+            # if we've reached a terminal state
+            # update alpha and return terminal value
+            if next_moves == []:
+                term_val = self.eval_func(next_state, next_color)
+                return term_val
+
+            # find next action with max utility
+            v = -99999
+            for mv in next_moves:
+                mvValue = self.get_value(mv, next_state, depth, next_color)
+                v = max(v, mvValue)
+            return v
+
+        # if opponent is to move
+        else:
+            # if we've reached a terminal state
+            # return terminal value without updating alpha/beta
+            if next_moves == []:
+                term_val = self.eval_func(next_state, next_color)
+                return term_val
+
+            # find next expected utility of next action
+            # p is the uniform probability of this action
+            p = 1.0 / float(len(next_moves))
+            v = 0
+            for mv in next_moves:
+                mvValue = self.get_value(mv, next_state, depth, next_color)
+                v += p * mvValue
+            return v

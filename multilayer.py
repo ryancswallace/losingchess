@@ -22,12 +22,12 @@ class Mutlilayer:
         # the weights and biases to be calculated
         self.W = {
             'h1': tf.Variable(tf.random_normal([self.n_input, self.n_hidden_1])),
-            # 'h2': tf.Variable(tf.random_normal([self.n_hidden_1, self.n_hidden_2])),
+            'h2': tf.Variable(tf.random_normal([self.n_hidden_1, self.n_hidden_2])),
             'out': tf.Variable(tf.random_normal([self.n_hidden_2, self.n_classes]))
         }
         self.b = {
             'b1': tf.Variable(tf.random_normal([self.n_hidden_1])),
-            # 'b2': tf.Variable(tf.random_normal([self.n_hidden_2])),
+            'b2': tf.Variable(tf.random_normal([self.n_hidden_2])),
             'out': tf.Variable(tf.random_normal([self.n_classes]))
         }
 
@@ -36,8 +36,8 @@ class Mutlilayer:
         layer_1 = tf.add(tf.matmul(x, weights['h1']), biases['b1'])
         layer_1 = tf.nn.relu(layer_1)
         # Hidden layer with RELU activation
-        # layer_2 = tf.add(tf.matmul(layer_1, weights['h2']), biases['b2'])
-        # layer_2 = tf.nn.relu(layer_2)
+        layer_2 = tf.add(tf.matmul(layer_1, weights['h2']), biases['b2'])
+        layer_2 = tf.nn.relu(layer_2)
         # Output layer with softmax activation
         out_layer = tf.nn.softmax(tf.matmul(layer_1, weights['out']) + biases['out'])
         return out_layer

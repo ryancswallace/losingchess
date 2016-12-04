@@ -6,7 +6,8 @@ import play
 import sys
 
 # maps from arguments to possible agents and evaluators
-agent_choices = {'human': chess_agents.HumanAgent, 'random': chess_agents.RandomAgent, 'alpha_beta': chess_agents.AlphaBetaAgent}
+agent_choices = {'human': chess_agents.HumanAgent, 'random': chess_agents.RandomAgent, 
+                 'alpha_beta': chess_agents.AlphaBetaAgent, 'expectimax': chess_agents.ExpectimaxAgent}
 
 eval_choices = {'weighted_count': evaluation.WeightedPieceCount, 'anti_pawn': evaluation.AntiPawn, 
                 'weighted_count_captures': evaluation.WeightedPieceCountWCaptures, 'softmax': evaluation.SoftmaxEval, 
