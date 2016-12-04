@@ -83,3 +83,7 @@ class Mutlilayer:
                 x_train = [t[0] for t in training_boards]
                 y_train = np.array([t[1] for t in training_boards]).reshape(self.num_sample_positions, 3)
                 train_step.run(feed_dict={x: x_train, y_: y_train})
+                print self.W
+
+net = Mutlilayer(30, 10, .5)
+net.train()

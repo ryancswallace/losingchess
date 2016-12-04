@@ -153,12 +153,17 @@ class LosingBoard:
     def __str__(self):
         builder = []
 
+        # get most recent move
         last_move = str(self.board.peek())
         last_move_start = last_move[:2]
         last_move_end = last_move[2:]
+
+        # handle square moved from
         start_rank = ord(last_move_start[0]) - ord('a')
         start_file = int(last_move_start[1])
         start_green_square = (start_file - 1) * 8 + start_rank
+
+        # handle square moved to
         end_rank = ord(last_move_end[0]) - ord('a')
         end_file = int(last_move_end[1])
         end_green_square = (end_file - 1) * 8 + end_rank
@@ -169,13 +174,17 @@ class LosingBoard:
             if piece:
                 sym = piece.symbol()
                 if square == end_green_square:
+                    # green
                     builder.append("\033[32m" + sym + "\033[0m")
                 elif sym.isupper():
+                    # red
                     builder.append("\033[31m" + sym + "\033[0m")
                 else:
+                    # blue
                     builder.append("\033[34m" + sym + "\033[0m")
             else:
                 if square == start_green_square:
+                    # green background
                     builder.append("\033[42m \033[0m")
                 else:
                     builder.append(".")
