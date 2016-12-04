@@ -2,15 +2,32 @@ import chess
 import random
 
 class Agent:
-    def __init__(self, eval_func, color=chess.WHITE, depth='1'):
+    def __init__(self, eval_func, color=chess.WHITE, depth=1):
         self.color = color
         self.eval_func = eval_func
-        self.depth = int(depth) - 1
+        self.depth = depth - 1
         if self.depth < 0:
             raise Exception("Depth must be >= 0")
 
     def get_move(self, game_state):
         raise Exception("Undefined!")
+
+class HumanAgent(Agent):
+    def get_move(self, game_state):
+        moves = game_state.board.get_legal_moves()
+        if len(moves) == 0:
+            return None
+        else:
+            while True:
+                move_string = raw_input('Enter your move: ')
+                try:
+                    move = chess.Move.from_uci(move_string)
+                    if move in moves:
+                        return move
+                    else:
+                        print 'Invalid move. Try again.'
+                except:
+                    print 'Invalid move. Try again.'
 
 class RandomAgent(Agent):
     def get_move(self, game_state):

@@ -32,7 +32,7 @@ class Game:
                     break
 
                 # agent finds best move
-                move_val_pair = agent.get_move(self, return_value=True)
+                move_val_pair = agent.get_move(self)
 
                 # if there are no moves to be made
                 if move_val_pair is None:
@@ -46,7 +46,10 @@ class Game:
                 # if there are moves to be made
                 else:
                     # make move and if agent 1 keep track of board and values
-                    mv, val = move_val_pair
+                    if type(move_val_pair) == list:
+                        mv, val = move_val_pair
+                    else:
+                        mv, val = move_val_pair, None
                     self.board.move(mv)
                     if agent == self.a1:
                         position_values.append(val)
@@ -78,12 +81,15 @@ class Game:
 
         return position_values, board_vectors
 
-# multilayer_model = multilayer.Mutlilayer(10, 10, 1, 1, vectorize.piece_count_vector, 12)
-# multilayer_model.train()
+# weighted_counter = evaluation.WeightedPieceCount()
 
-# multilayer_model = evaluation.MultilayerEval(multilayer_model)
-# eval1 = multilayer_model.multilayer_eval
-# eval2 = multilayer_model.multilayer_eval
+# a1 = chess_agents.AlphaBetaAgent(color=chess.WHITE, eval_func=weighted_counter.weighted_piece_count, depth=1)
+# a2 = chess_agents.HumanAgent(color=chess.BLACK, eval_func=None)
+
+# board = losing_board.LosingBoard(no_kings=False)
+
+# game = Game(board, a1, a2)
+# game.play()
 
 sm_model = softmax.Softmax(10, 10, 1, 1, vectorize.piece_vector, 46)
 sm_model.train(print_accuracy=True)
@@ -92,12 +98,12 @@ sm_eval = evaluation.SoftmaxEval(sm_model)
 eval1 = sm_eval.softmax_eval
 eval2 = sm_eval.softmax_eval
 #
-weighted_counter = evaluation.WeightedPieceCount()
+# weighted_counter = evaluation.WeightedPieceCount()
 # #
-a1 = chess_agents.AlphaBetaAgent(color=chess.WHITE, eval_func=eval1, depth='1')
-a2 = chess_agents.AlphaBetaAgent(color=chess.BLACK, eval_func=eval2, depth='1')
-# a1 = chess_agents.AlphaBetaAgent(color=chess.WHITE, eval_func=weighted_counter.weighted_piece_count, depth='1')
-# a2 = chess_agents.AlphaBetaAgent(color=chess.BLACK, eval_func=weighted_counter.weighted_piece_count, depth='1')
+a1 = chess_agents.AlphaBetaAgent(color=chess.WHITE, eval_func=eval1, depth=1)
+a2 = chess_agents.AlphaBetaAgent(color=chess.BLACK, eval_func=eval2, depth=1)
+# a1 = chess_agents.AlphaBetaAgent(color=chess.WHITE, eval_func=weighted_counter.weighted_piece_count, depth=1)
+# a2 = chess_agents.AlphaBetaAgent(color=chess.BLACK, eval_func=weighted_counter.weighted_piece_count, depth=1)
 board = losing_board.LosingBoard(no_kings=False)
 
 game = Game(board, a1, a2)
