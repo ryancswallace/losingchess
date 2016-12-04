@@ -35,18 +35,18 @@ class LosingBoard:
                              for color in [chess.WHITE, chess.BLACK]
                             }
 
-
     def get_legal_moves(self):
         """
         Return list of all legal moves for a color given the current gamestate.
         Since the Board class knows whose turn it is, we need not take a color argument.
         """
+        print 'in get legal moves 1'
 
         legal_moves = []
 
         # get pseudo legal moves under normal chess rules (includes putting king into check)
         chess_legal_moves = self.board.pseudo_legal_moves
-
+        print 'in get legal moves 2'
         # check for attacking positions
         # if one is found, we only include attacking moves among legal moves
         attacking = False
@@ -54,14 +54,13 @@ class LosingBoard:
             if self.board.piece_at(mv.to_square):
                 legal_moves.append(mv)
                 attacking = True
-
+        print 'in get legal moves 3'
         if attacking:
             return legal_moves
         else:
             # take out castling moves
             out_moves = [move for move in list(chess_legal_moves) if not self.board.is_castling(move)]
             return out_moves
-
 
     def move(self, mv):
         """
@@ -108,6 +107,25 @@ class LosingBoard:
             if all(v == 0 for v in self.piece_counts[k].values()):
                 return True
         return False
+
+    def winner_by_pieces(self):
+        """
+        Return chess.WHITE if white has fewer peices, chess.BLACK if black has fewer, 0.5 if same
+        """
+        num_white = 0
+        num_black = 0
+        for piece_type in [chess.PAWN, chess.ROOK, chess.BISHOP, chess.QUEEN, chess.KING, chess.KNIGHT]:
+            num_white += len(self.board.pieces(piece_type, chess.WHITE))
+            num_black += len(self.board.pieces(piece_type, chess.BLACK))
+
+        if num_white < num_black:
+            return chess.WHITE
+        elif num_white > num_black:
+            return chess.BLACK
+        elif num_white == num_black:
+            return 0.5
+        else:
+            raise Exception('Impossible.')
 
     def piece_at(self, square):
         return self.board.piece_at(square)

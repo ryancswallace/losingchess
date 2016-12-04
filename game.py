@@ -1,9 +1,10 @@
-import chess
+# import chess
 
-import losing_board
-import chess_agents
-import softmax
-import evaluation
+# import losing_board
+# import chess_agents
+# import softmax
+# import evaluation
+import vectorize
 
 """
 Here we will build the processes that drive games between two AIs,
@@ -20,30 +21,37 @@ class Game:
 
     def play(self, max_turns=None):
         position_values = []
-        moves_made = []
+        board_vectors = []
         while True:
             outer_break = False
             turn = False
             for agent in [self.a1,self.a2]:
-
+                # check that game didn't end on last half-move
                 if outer_break:
                     break
 
-                res = agent.get_move(self.board, return_value=True)
-                if res is None:
+                # agent finds best move
+                # move_val_pair = agent.get_move(self.board, return_value=True)
+                print 'before getting move'
+                move_val_pair = agent.get_move(self.board, return_value=True)
+                print 'after getting move'
+                # if there are no moves to be made
+                if move_val_pair is None:
                     outer_break = True
-                    print "Because it's a stalemate, Agent " + str(turn + 1) + " victorious!"
-                    break
+                    winner = self.board.winner_by_pieces()
+                    if winner == 0.5:
+                        print "It's a draw in " + str(self.board.board.fullmove_number) + " plies.\n"
+                    else:
+                        print "Because it's a stalemate, Agent " + str(int(winner)) + " victorious!"
                 
                 # if there are moves to be made
                 else:
-                    # keep track of moves and values
-                    mv, val = res
-                    position_values.append(val)
-                    if self.board.is_seventyfive_moves():
-                        outer_break = True
-                        print "It's a draw due to 75 moves."
+                    # make move and if agent 1 keep track of board and values
+                    mv, val = move_val_pair
                     self.board.move(mv)
+                    if agent == self.a1:
+                        position_values.append(val)
+                        board_vectors.append(vectorize.piece_vector(self.board))
 
                     # print board 
                     print "Agent " + str(turn + 1) + " makes move: "+ str(mv)
@@ -53,10 +61,12 @@ class Game:
                     # switch players
                     turn = not turn
 
+                    if self.board.is_seventyfive_moves():
+                        outer_break = True
+                        print "It's a draw due to 75 moves."
+
                     if self.board.is_game_over():
-                        print
-                        print "Agent " + str(turn + 1) + " victorious in " + str(self.board.board.fullmove_number) + " plies."
-                        print
+                        print "Agent " + str(turn + 1) + " victorious in " + str(self.board.board.fullmove_number) + " plies.\n"
                         outer_break = True
 
             # update turn numbers
@@ -67,23 +77,23 @@ class Game:
             if outer_break: 
                 break
 
-        return position_values, moves_made
+        return position_values, board_vectors
 
-# example run with softmax
-sm_model = softmax.Softmax(3000, 1000, 0.01)
-sm_model.train(print_accuracy=True)
+# # example run with softmax
+# sm_model = softmax.Softmax(3000, 1000, 0.01)
+# sm_model.train(print_accuracy=True)
 
-sm_eval = evaluation.SoftmaxEval(sm_model)
-eval1 = sm_eval.softmax_eval
-eval2 = sm_eval.softmax_eval
-#
-# weighted_counter = evaluation.WeightedPieceCount()
-#
-a1 = chess_agents.AlphaBetaAgent(color=chess.WHITE, eval_func=eval1, depth='1')
-a2 = chess_agents.AlphaBetaAgent(color=chess.BLACK, eval_func=eval2, depth='1')
-# a1 = chess_agents.AlphaBetaAgent(color=chess.WHITE, eval_func=weighted_counter.weighted_piece_count, depth='1')
-# a2 = chess_agents.AlphaBetaAgent(color=chess.BLACK, eval_func=weighted_counter.weighted_piece_count, depth='1')
-board = losing_board.LosingBoard(no_kings=False)
+# sm_eval = evaluation.SoftmaxEval(sm_model)
+# eval1 = sm_eval.softmax_eval
+# eval2 = sm_eval.softmax_eval
+# #
+# # weighted_counter = evaluation.WeightedPieceCount()
+# #
+# a1 = chess_agents.AlphaBetaAgent(color=chess.WHITE, eval_func=eval1, depth='1')
+# a2 = chess_agents.AlphaBetaAgent(color=chess.BLACK, eval_func=eval2, depth='1')
+# # a1 = chess_agents.AlphaBetaAgent(color=chess.WHITE, eval_func=weighted_counter.weighted_piece_count, depth='1')
+# # a2 = chess_agents.AlphaBetaAgent(color=chess.BLACK, eval_func=weighted_counter.weighted_piece_count, depth='1')
+# board = losing_board.LosingBoard(no_kings=False)
 
-game = Game(board, a1, a2)
-game.play()
+# game = Game(board, a1, a2)
+# game.play()

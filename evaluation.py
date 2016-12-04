@@ -32,16 +32,12 @@ class AntiPawn:
 
 class WeightedPieceCountWCaptures:
     def captures_present(self, game_state, color):
-        # for all pieces
-        pieces = game_state.piece_counts
-        for piece in pieces[color]:
-            # look at all moves
-            # TODO this gets all moves regardless of piece
-            legal_moves = game_state.get_legal_moves()
-            for mv in legal_moves:
-                # check if any move captures
-                if game_state.board.piece_at(mv.to_square):
-                    return True
+        # for all legal moves
+        legal_moves = game_state.get_legal_moves()
+        for mv in legal_moves:
+            # check if any move captures
+            if game_state.board.piece_at(mv.to_square):
+                return True
         return False
 
     def weighted_piece_count_w_captures(self, game_state, color):        
@@ -74,14 +70,47 @@ class SoftmaxEval:
 
     def softmax_eval(self, game_state, color):
         board_vector = vectorize.piece_vector(game_state.board)
-        print game_state.board
 
         # predict new board
         predict = tf.argmax(self.y,1)
         x_np = np.array(board_vector).reshape(1,len(board_vector))
         pred = self.sess.run(predict, feed_dict={self.x: x_np})[0]
-        print pred
         if color == chess.WHITE:
             return pred
         else:
             return 2 - pred
+
+class TDTrainEval:
+    def __init__(self, model):
+        self.model = model
+        if self.model.W is None or self.model.b is None:
+            raise Exception('Initialize/train model first.')
+
+        # tensor for board_vector
+        self.x = tf.placeholder(tf.float32, [1, self.model.vector_len])
+
+        # the weight matrix and bias vector
+        W = tf.constant(self.model.W, dtype=tf.float32)
+        b = tf.constant(self.model.b, dtype=tf.float32)
+
+        self.sess = tf.InteractiveSession()
+        
+        # initialize variables
+        self.sess.run(tf.global_variables_initializer())
+
+        # define model with weights and biases calculated
+        self.y = tf.nn.softmax(tf.matmul(self.x, W) + b)
+
+    def eval(self, game_state, color):
+        board_vector = vectorize.piece_vector(game_state.board)
+
+        # predict new board
+        predict = tf.argmax(self.y,1)
+        x_np = np.array(board_vector).reshape(1,len(board_vector))
+        pred = self.sess.run(predict, feed_dict={self.x: x_np})[0]
+
+        if color == chess.WHITE:
+            return pred
+        else:
+            # TODO: fix this
+            return -pred
