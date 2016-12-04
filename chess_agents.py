@@ -20,18 +20,23 @@ class HumanAgent(Agent):
         else:
             while True:
                 move_string = raw_input('Enter your move: ')
-                try:
-                    move = chess.Move.from_uci(move_string)
-                    if move in moves:
-                        return move
-                    else:
+                if move_string == 'moves':
+                    print 'Possible moves:'
+                    for move in moves:
+                        print str(move)
+                else:
+                    try:
+                        move = chess.Move.from_uci(move_string)
+                        if move in moves:
+                            return move
+                        else:
+                            print 'Invalid move. Try again.'
+                    except:
                         print 'Invalid move. Try again.'
-                except:
-                    print 'Invalid move. Try again.'
 
 class RandomAgent(Agent):
     def get_move(self, game_state):
-        moves = game_state.get_legal_moves()
+        moves = game_state.board.get_legal_moves()
         if len(moves) == 0:
             return None
         else:
