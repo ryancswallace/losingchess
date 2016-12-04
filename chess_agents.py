@@ -2,145 +2,111 @@ import chess
 import losing_board
 import random
 import time
+import copy_reg
+import types
 from functools import partial
 from multiprocessing import Pool
 
 class Agent:
+	def __init__(self, eval_func, color=chess.WHITE, depth=1):
+		self.color = color
+		self.eval_func = eval_func
+		self.depth = depth
+		if self.depth < 0:
+			raise Exception("Depth must be >= 0")
 
-    def __init__(self, eval_func, color=chess.WHITE, depth='1'):
-        self.color = color
-        self.eval_func = eval_func
-        self.depth = int(depth)
+	def get_move(self, game_state):
+		raise Exception("Undefined!")
 
-    def get_move(self, game_state):
-        raise Exception("Undefined!")
-
+class HumanAgent(Agent):
+	def get_move(self, game_state):
+		moves = game_state.board.get_legal_moves()
+		if len(moves) == 0:
+			return None
+		else:
+			while True:
+				move_string = raw_input('Enter your move: ')
+				if move_string == 'moves':
+					print 'Possible moves:'
+					for move in moves:
+						print str(move)
+				else:
+					try:
+						move = chess.Move.from_uci(move_string)
+						if move in moves:
+							return move
+						else:
+							print 'Invalid move. Try again.'
+					except:
+						print 'Invalid move. Try again.'
 
 class RandomAgent(Agent):
 	def get_move(self, game_state):
-		moves = game_state.get_legal_moves()
-		move = random.sample(moves, 1)[0]
-		return move
+		moves = game_state.board.get_legal_moves()
+		if len(moves) == 0:
+			return None
+		else:
+			move = random.sample(moves, 1)[0]
+			return move
 
 
-class UserAgent(Agent):
-	def get_move(self, game_state):
-		while True:
-			inmv = raw_input("Enter your move: ")
-			mv = chess.Move.from_uci(inmv)
-			if mv in game_state.get_legal_moves():
-				return mv
+"""
+Necessary code for running a class method in parallel.
+Essentially, tells python how to convert a method that is built into a class 
+to a standalone binary file (since this is necessary for multiprocesing).
 
-
-def _alpha_beta_value(move, game_state, alpha, beta, depth, color, true_color, true_depth, eval_func):
-	"""
-	Helper function for performing alpha-beta pruning in parallel.
-	"""
-	# has max depth been reached?
-	if depth == true_depth:
-		return eval_func(game_state, color)
-
-	# get next game state
-	next_state = game_state.generate_successor(move)
-
-	# has agent won?
-	if next_state.is_game_over():
-		return 99999
-
-	# does agent move next?
-	next_color = not color
-
-	# get information about next state
-	next_moves = next_state.get_legal_moves()
-
-	# if this agent is to move
-	if next_color == true_color:
-
-		# increment depth if agent is pacman
-		depth += 1
-
-		# if we've reached a terminal state
-		# update alpha and return terminal value
-		if next_moves == []:
-			term_val = eval_func(next_state, next_color)
-			alpha = max(alpha, term_val)
-			return term_val
-
-		# find next action with max utility
-		v = -99999
-		for mv in next_moves:
-			mvValue = _alpha_beta_value(mv, next_state, alpha, beta, depth, next_color, true_color, true_depth, eval_func)
-			v = max(v, mvValue)
-			# prune if value is great enough
-		if v > beta:
-		  return v
-		alpha = max(alpha, v)
-		return v
-
-	# if opponent is to move
+citation: dano, http://stackoverflow.com/questions/25156768
+		  /cant-pickle-type-instancemethod-using-pythons-multiprocessing-pool-apply-a
+"""
+def _pickle_method(m):
+	if m.im_self is None:
+		return getattr, (m.im_class, m.im_func.func_name)
 	else:
-		# if we've reached a terminal state
-		# return terminal value without updating alpha/beta
-		if next_moves == []:
-			term_val = eval_func(next_state, next_color)
-			return term_val
+		return getattr, (m.im_self, m.im_func.func_name)
 
-		# find next action with min utility
-		v = 99999
-		for mv in next_moves:
-			mvValue = _alpha_beta_value(mv, next_state, alpha, beta, depth, next_color, true_color, true_depth, eval_func)
-			v = min(v, mvValue)
-			#prune if value is small enough
-			if v < alpha:
-				return v
-			beta = min(beta, v)
-		return v
+copy_reg.pickle(types.MethodType, _pickle_method)
 
-<<<<<<< HEAD
-	def get_move(self, game_state):
+
+class AlphaBetaAgent(Agent):
+	def get_move(self, game_state, return_value=False):
 		"""
 		Return minimax move using self.depth, self.eval_func, and alpha-beta pruning.
 		"""
-
-		moves = game_state.get_legal_moves()
-
+		moves = game_state.board.get_legal_moves()
 		if len(moves) == 0:
 			return None
 
-
-		get_ab_value = partial(_alpha_beta_value, game_state=game_state, 
+		get_ab_value = partial( self._alpha_beta_value, board=game_state.board, 
 								alpha=-99999, beta=99999, depth=0, 
-								color=self.color, true_color=self.color, 
-								true_depth=self.depth, eval_func=self.eval_func)
+								color=self.color)
 
 		p = Pool(8)
 		values = p.map(get_ab_value, moves)
 		p.terminate()
 
-		val_dict = {mv: v for mv, v in zip(moves, values)}
+		values = {mv: v for mv, v in zip(moves, values)}
 
-		# return action with max utility, 
+		# return action with max utility,
 		# random action if there's a tie
-		best_val = max(val_dict.values())	
+		best_val = max(values.values())
 		best_actions = []
-		for k, v in val_dict.iteritems():
+		for k, v in values.iteritems():
 			if v == best_val:
 				best_actions.append(k)
+		best_action = random.sample(best_actions, 1)[0]
+		if return_value:
+			return (best_action, best_val)
+		else:
+			return best_action
 
-		return random.sample(best_actions, 1)[0]
 
-
-
-	def _alpha_beta_value(self, move, game_state, alpha, beta, depth, color):
+	def _alpha_beta_value(self, move, board, alpha, beta, depth, color):
 		"""
 		Helper function for performing alpha-beta pruning.
 		"""
-		# has max depth been reached?
-		if depth == self.depth:
-			return self.eval_func(game_state, color)
 
 		# get next game state
-		next_state = game_state.generate_successor(move)
+		next_state = board.generate_successor(move)
 
 		# has agent won?
 		if next_state.is_game_over():
@@ -149,13 +115,17 @@ def _alpha_beta_value(move, game_state, alpha, beta, depth, color, true_color, t
 		# does agent move next?
 		next_color = not color
 
+		# has max depth been reached?
+		if depth == self.depth:
+			return self.eval_func(next_state, color)
+
 		# get information about next state
 		next_moves = next_state.get_legal_moves()
 
 		# if this agent is to move
-		if next_color == self.color:
+		if next_color == self.color: 
 
-			# increment depth if agent is pacman
+			# increment depth
 			depth += 1
 
 			# if we've reached a terminal state
@@ -171,8 +141,8 @@ def _alpha_beta_value(move, game_state, alpha, beta, depth, color, true_color, t
 				mvValue = self._alpha_beta_value(mv, next_state, alpha, beta, depth, next_color)
 				v = max(v, mvValue)
 				# prune if value is great enough
-			if v > beta:
-			  return v
+			if v >= beta:
+				return v
 			alpha = max(alpha, v)
 			return v
 
@@ -190,7 +160,7 @@ def _alpha_beta_value(move, game_state, alpha, beta, depth, color, true_color, t
 				mvValue = self._alpha_beta_value(mv, next_state, alpha, beta, depth, next_color)
 				v = min(v, mvValue)
 				#prune if value is small enough
-				if v < alpha:
+				if v <= alpha:
 					return v
 				beta = min(beta, v)
 			return v
