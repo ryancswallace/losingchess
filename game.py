@@ -83,9 +83,9 @@ class Game:
 
 weighted_counter = evaluation.WeightedPieceCount()
 
-a2 = chess_agents.AlphaBetaAgent(color=chess.WHITE, eval_func=weighted_counter.weighted_piece_count, depth=2)
-# a2 = chess_agents.AlphaBetaAgent(color=chess.BLACK, eval_func=weighted_counter.weighted_piece_count, depth=2)
-a1 = chess_agents.HumanAgent(color=chess.BLACK, eval_func=None)
+a1 = chess_agents.AlphaBetaAgent(color=chess.WHITE, eval_func=weighted_counter.weighted_piece_count, depth=2)
+a2 = chess_agents.AlphaBetaAgent(color=chess.BLACK, eval_func=weighted_counter.weighted_piece_count, depth=2)
+# a2 = chess_agents.HumanAgent(color=chess.BLACK, eval_func=None)
 
 board = losing_board.LosingBoard(no_kings=False)
 
