@@ -31,16 +31,30 @@ class StatsGenerator:
 		return a1_victory_dict
 
 
+def get_win_proc(l):
+	results = zip(*l)[0] 
+	wins = [w for w in results if w is not None]
+	return sum(wins)/float(len(results)), (len(wins) - sum(wins))/float(len(results))
+
+
 if __name__ == "__main__":
 
+	alternate_weights = {chess.PAWN: 6,
+						chess.KING: 5,
+						chess.KNIGHT: 3,
+						chess.BISHOP: 3,
+						chess.ROOK: 2,
+						chess.QUEEN: 1}
+
 	anti_pawn = evaluation.AntiPawn()
-	counter = evaluation.WeightedPieceCount()
+	counter1 = evaluation.WeightedPieceCount()
+	counter2 = evaluation.WeightedPieceCount(weights=alternate_weights)
 
 	a1 = chess_agents.AlphaBetaAgent(color=chess.WHITE, eval_func=counter1.weighted_piece_count, depth='1')
 	a2 = chess_agents.AlphaBetaAgent(color=chess.BLACK, eval_func=counter2.weighted_piece_count, depth='1')
 	board = losing_board.LosingBoard(no_kings=False)
 
 	s = StatsGenerator()
-	out_dict = s.compare_agents(a1, a2, board, 20)
+	out_dict = s.compare_agents(a1, a2, board, 40)
 
 		

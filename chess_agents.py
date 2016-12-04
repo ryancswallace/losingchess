@@ -64,7 +64,7 @@ class AlphaBetaAgent(Agent):
 
 		# perform alpha-beta pruning in parallel
 		p = Pool(8)
-		values = p.map(get_ab_value, moves)
+		values = p.map_async(get_ab_value, moves).get(99999)
 		p.terminate()
 
 		val_dict = {mv: v for mv, v in zip(moves, values)}
@@ -83,6 +83,7 @@ class AlphaBetaAgent(Agent):
 			return (best_action, best_val)
 		else:
 			return best_action
+
 
 	def _alpha_beta_value(self, move, game_state, alpha, beta, depth, color):
 		"""
