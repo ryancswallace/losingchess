@@ -78,7 +78,7 @@ class Game:
 
         return position_values, board_vectors
 
-multilayer_model = multilayer.Mutlilayer(1000, 10000, 1)
+multilayer_model = multilayer.Mutlilayer(100, 1000, 1)
 multilayer_model.train()
 
 multilayer_model = evaluation.MultilayerEval(multilayer_model)

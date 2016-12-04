@@ -29,7 +29,7 @@ def pgn_to_boards(pgn_files=[], labels=False, vectorized=False):
     if pgn_files == []:
         dir_path = os.path.dirname(os.path.realpath(__file__))
         dir_path = os.path.join(dir_path, 'data')
-        pgn_file_names = ['all_losing_' + str(i) + '.pgn' for i in range(9)]
+        pgn_file_names = ['all_losing_' + str(i) + '.pgn' for i in range(1)]
         for pgn_file_name in pgn_file_names:
             pgn_files.append(os.path.join(dir_path, pgn_file_name))
 

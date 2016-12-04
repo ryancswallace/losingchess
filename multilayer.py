@@ -12,20 +12,20 @@ class Mutlilayer:
         self.learning_rate = learning_rate
 
         # parameters of the network
-        self.n_input = 46 # length of feature vector
+        self.n_input = 48 # length of feature vector
         self.n_hidden_1 = 256 # 1st layer number of features
         self.n_hidden_2 = 256 # 2nd layer number of features
-        self.n_classes = 3 # win, loose, draw
+        self.n_classes = 3 # win, lose, draw
 
         # the weights and biases to be calculated
         self.W = {
             'h1': tf.Variable(tf.random_normal([self.n_input, self.n_hidden_1])),
-            'h2': tf.Variable(tf.random_normal([self.n_hidden_1, self.n_hidden_2])),
+            # 'h2': tf.Variable(tf.random_normal([self.n_hidden_1, self.n_hidden_2])),
             'out': tf.Variable(tf.random_normal([self.n_hidden_2, self.n_classes]))
         }
         self.b = {
             'b1': tf.Variable(tf.random_normal([self.n_hidden_1])),
-            'b2': tf.Variable(tf.random_normal([self.n_hidden_2])),
+            # 'b2': tf.Variable(tf.random_normal([self.n_hidden_2])),
             'out': tf.Variable(tf.random_normal([self.n_classes]))
         }
 
@@ -34,15 +34,16 @@ class Mutlilayer:
         layer_1 = tf.add(tf.matmul(x, weights['h1']), biases['b1'])
         layer_1 = tf.nn.relu(layer_1)
         # Hidden layer with RELU activation
-        layer_2 = tf.add(tf.matmul(layer_1, weights['h2']), biases['b2'])
-        layer_2 = tf.nn.relu(layer_2)
+        # layer_2 = tf.add(tf.matmul(layer_1, weights['h2']), biases['b2'])
+        # layer_2 = tf.nn.relu(layer_2)
         # Output layer with softmax activation
-        out_layer = tf.nn.softmax(tf.matmul(layer_2, weights['out']) + biases['out'])
+        out_layer = tf.nn.softmax(tf.matmul(layer_1, weights['out']) + biases['out'])
         return out_layer
 
     def train(self):
         # get vectorized, labeled training data
         all_training_boards = parse.pgn_to_boards(labels=True, vectorized=True)
+        print 'after parse'
         
         # confirm that feature length is correct
         assert self.n_input == len(all_training_boards[0][0])
@@ -83,7 +84,6 @@ class Mutlilayer:
                 x_train = [t[0] for t in training_boards]
                 y_train = np.array([t[1] for t in training_boards]).reshape(self.num_sample_positions, 3)
                 train_step.run(feed_dict={x: x_train, y_: y_train})
-                print self.W
 
-net = Mutlilayer(30, 10, .5)
+net = Mutlilayer(3, 1, .5)
 net.train()
