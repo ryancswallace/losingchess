@@ -62,7 +62,9 @@ def piece_vector(board):
     black_counts = [0] * 6
 
     white_attacked = 0
+    white_supported = 0
     black_attacked = 0
+    black_supported = 0
 
     for ptype in piece_types:
         white_set = board.pieces(ptype, chess.WHITE)
@@ -150,10 +152,14 @@ def piece_vector(board):
         for square in white_set:
             if board.is_attacked_by(chess.BLACK, square):
                 white_attacked += 1
+            if board.is_attacked_by(chess.WHITE, square):
+                white_supported += 1
 
         for square in black_set:
             if board.is_attacked_by(chess.WHITE, square):
                 black_attacked += 1
+            if board.is_attacked_by(chess.BLACK, square):
+                black_supported += 1
 
     # number of pieces on each side under attack
     out_vec.append(white_attacked)
