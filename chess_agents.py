@@ -12,7 +12,6 @@ class Agent:
     def get_move(self, game_state):
         raise Exception("Undefined!")
 
-
 class RandomAgent(Agent):
     def get_move(self, game_state):
         moves = game_state.get_legal_moves()
@@ -21,7 +20,6 @@ class RandomAgent(Agent):
         else:
             move = random.sample(moves, 1)[0]
             return move
-
 
 class AlphaBetaAgent(Agent):
     def get_move(self, game_state, return_value=False):

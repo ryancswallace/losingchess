@@ -1,15 +1,18 @@
 import parse
+
 import random
 import numpy as np
-
 import tensorflow as tf
 
 class Softmax:
-    def __init__(self, num_training_iterations, num_sample_positions, learning_rate):
+    def __init__(self, num_training_iterations, num_sample_positions, num_data_sets, learning_rate, vectorize_method, vector_len):
         # parameters of training
         self.num_training_iterations = num_training_iterations
         self.num_sample_positions = num_sample_positions
         self.learning_rate = learning_rate
+        self.vectorize_method = vectorize_method
+        self.num_data_sets = num_data_sets
+        self.vector_len = vector_len
 
         # the weight matrix and bias vector to be calculated
         self.W = None
@@ -17,9 +20,9 @@ class Softmax:
 
     def train(self, print_accuracy=False):
         # get vectorized, labeled training data
-        all_training_boards = parse.pgn_to_boards(labels=True, vectorized=True)
+        all_training_boards = parse.pgn_to_boards(self.num_data_sets, labels=True, vectorize_method=self.vectorize_method)
         num_boards = len(all_training_boards)
-        self.vector_len = len(all_training_boards[0][0])
+        assert self.vector_len == len(all_training_boards[0][0])
 
         # encode label as one hot vector
         for i, (board_vector, label) in enumerate(all_training_boards):
@@ -74,27 +77,3 @@ class Softmax:
             self.W = W.eval()
             self.b = b.eval()
 
-    def eval(self, board_vector):
-        # check that model has been trained
-        if self.W is None or self.b is None:
-            raise Exception('Train softmax first.')
-
-        # tensor for board_vector
-        x = tf.placeholder(tf.float32, [1, len(board_vector)])
-
-        # the weight matrix and bias vector
-        W = tf.constant(self.W, dtype=tf.float32)
-        b = tf.constant(self.b, dtype=tf.float32)
-
-        with tf.Session() as sess:
-            # initialize variables
-            sess.run(tf.global_variables_initializer())
-
-            # define model with weights and biases calculated
-            y = tf.nn.softmax(tf.matmul(x, W) + b)
-
-            # predict new board
-            predict = tf.argmax(y,1)
-            x_np = np.array(board_vector).reshape(1,len(board_vector))
-            pred = sess.run(predict, feed_dict={x: x_np})[0]
-            return pred

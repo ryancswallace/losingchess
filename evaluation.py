@@ -69,7 +69,7 @@ class SoftmaxEval:
         self.y = tf.nn.softmax(tf.matmul(self.x, W) + b)
 
     def softmax_eval(self, game_state, color):
-        board_vector = vectorize.piece_vector(game_state.board)
+        board_vector = self.softmax_model.vectorize_method(game_state.board)
 
         # predict new board
         predict = tf.argmax(self.y,1)
@@ -98,7 +98,7 @@ class MultilayerEval:
         self.y = multilayer_model.multilayer_perceptron(self.x, self.multilayer_model.W, self.multilayer_model.b)
 
     def multilayer_eval(self, game_state, color):
-        board_vector = vectorize.piece_vector(game_state.board)
+        board_vector = self.multilayer_model.vectorize_method(game_state.board)
 
         # score new board
         score = self.y
@@ -134,7 +134,7 @@ class TDTrainEval:
         self.y = tf.nn.softmax(tf.matmul(self.x, W) + b)
 
     def eval(self, game_state, color):
-        board_vector = vectorize.piece_vector(game_state.board)
+        board_vector = self.model.vectorize_method(game_state.board)
 
         # predict new board
         predict = tf.argmax(self.y,1)

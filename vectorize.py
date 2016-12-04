@@ -1,4 +1,5 @@
 import chess
+import losing_board
 
 # this case handles promotions easily
 def square_vector(board):
@@ -178,3 +179,30 @@ def piece_vector(board):
         out_vec.append(int(board.turn))
 
     return out_vec
+
+def piece_vector_len():
+    board = losing_board.LosingBoard()
+    vec = piece_vector(board)
+    return len(vec)
+
+def piece_count_vector(board):
+    piece_types = [chess.PAWN, chess.KNIGHT, chess.BISHOP, chess.ROOK, chess.QUEEN, chess.KING]
+    white_counts = [0] * 6
+    black_counts = [0] * 6
+    for ptype in piece_types:
+        # find the number of white and black pieces of each type
+        white_set = board.pieces(ptype, chess.WHITE)
+        black_set = board.pieces(ptype, chess.BLACK)
+
+        white_counts[ptype - 1] = len(white_set)
+        black_counts[ptype - 1] = len(black_set)
+
+    # the final vectorization lists the number of white pieces of each type
+    # followed by the number of black pieces of each type
+    out_vec = white_counts + black_counts
+    return out_vec
+
+def piece_count_vector_len():
+    board = losing_board.LosingBoard()
+    vec = piece_count_vector(board)
+    return len(vec)

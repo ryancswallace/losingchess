@@ -1,5 +1,4 @@
 import chess.pgn
-import vectorize
 import os
 
 """
@@ -24,19 +23,20 @@ def pgn_to_games(pgn_file):
 
     return games
 
-def pgn_to_boards(pgn_files=[], labels=False, vectorized=False):
-    games = []
-    if pgn_files == []:
-        dir_path = os.path.dirname(os.path.realpath(__file__))
-        dir_path = os.path.join(dir_path, 'data')
-        pgn_file_names = ['all_losing_' + str(i) + '.pgn' for i in range(1)]
-        for pgn_file_name in pgn_file_names:
-            pgn_files.append(os.path.join(dir_path, pgn_file_name))
 
+def pgn_to_boards(num_data_sets, labels=False, vectorize_method=None):
+    num_data_sets = min(num_data_sets, 9)
+
+    pgn_files = []
+    dir_path = os.path.dirname(os.path.realpath(__file__))
+    dir_path = os.path.join(dir_path, 'data')
+    pgn_file_names = ['all_losing_' + str(i) + '.pgn' for i in range(num_data_sets)]
+    for pgn_file_name in pgn_file_names:
+        pgn_files.append(os.path.join(dir_path, pgn_file_name))
+    
+    games = []
     for pgn_file in pgn_files:
         games += pgn_to_games(pgn_file)
-
-    print 'num games:', len(games)
     
     board_result_pairs = []
     for game in games:
@@ -56,16 +56,17 @@ def pgn_to_boards(pgn_files=[], labels=False, vectorized=False):
         node = game
         while not node.is_end():
             node = node.variation(0)
-            if vectorized:
-                vector = vectorize.piece_vector(node.board())
-                if labels:
-                    board_result_pairs.append((vector, result))
-                else:
-                    board_result_pairs.append(vector)
-            else:
+            if vectorize_method is None:
                 if labels:
                     board_result_pairs.append((node.board(), result))
                 else:
                     board_result_pairs.append(node.board())
+            else:
+                vector = vectorize_method(node.board())
+                if labels:
+                    board_result_pairs.append((vector, result))
+                else:
+                    board_result_pairs.append(vector)
+                
 
     return board_result_pairs

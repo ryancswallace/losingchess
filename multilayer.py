@@ -1,18 +1,20 @@
 import parse
+
 import random
 import numpy as np
-
 import tensorflow as tf
 
 class Mutlilayer:
-    def __init__(self, num_training_iterations, num_sample_positions, learning_rate):
+    def __init__(self, num_training_iterations, num_sample_positions, num_data_sets, learning_rate, vectorize_method, vector_len):
         # parameters of training
         self.num_training_iterations = num_training_iterations
         self.num_sample_positions = num_sample_positions
+        self.num_data_sets = num_data_sets
         self.learning_rate = learning_rate
+        self.vectorize_method = vectorize_method
 
         # parameters of the network
-        self.n_input = 48 # length of feature vector
+        self.n_input = vector_len # length of feature vector
         self.n_hidden_1 = 256 # 1st layer number of features
         self.n_hidden_2 = 256 # 2nd layer number of features
         self.n_classes = 3 # win, lose, draw
@@ -42,10 +44,9 @@ class Mutlilayer:
 
     def train(self):
         # get vectorized, labeled training data
-        all_training_boards = parse.pgn_to_boards(labels=True, vectorized=True)
-        print 'after parse'
+        all_training_boards = parse.pgn_to_boards(self.num_data_sets, labels=True, vectorize_method=self.vectorize_method)
         
-        # confirm that feature length is correct
+        # confirm feature length
         assert self.n_input == len(all_training_boards[0][0])
 
         # encode label as one hot vector
@@ -84,6 +85,3 @@ class Mutlilayer:
                 x_train = [t[0] for t in training_boards]
                 y_train = np.array([t[1] for t in training_boards]).reshape(self.num_sample_positions, 3)
                 train_step.run(feed_dict={x: x_train, y_: y_train})
-
-net = Mutlilayer(3, 1, .5)
-net.train()
