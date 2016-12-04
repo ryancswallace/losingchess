@@ -4,7 +4,6 @@ import game
 import chess
 import chess_agents
 import evaluation
-import vectorize
 
 import random
 import numpy as np
@@ -12,22 +11,25 @@ import tensorflow as tf
 from operator import add
 
 class TDLeafLambda:
-    def __init__(self, num_training_iterations, num_sample_games, learning_rate, lambda_discount, num_training_turns, apply_random_move):
+    def __init__(self, num_training_iterations, num_sample_games, num_data_sets, learning_rate, lambda_discount, num_training_turns, apply_random_move, vectorize_method, vector_len):
         # parameters of training
         self.num_training_iterations = num_training_iterations
         self.num_sample_games = num_sample_games
+        self.num_data_sets = num_data_sets
         self.learning_rate = learning_rate
         self.lambda_discount = lambda_discount
         self.num_training_turns = num_training_turns
         self.apply_random_move = apply_random_move
-        
+        self.vectorize_method = vectorize_method
+        self.vector_len = vector_len
+
         # the weight matrix and bias vector to be calculated
         self.W = None
         self.b = None
 
     def train(self):
-        all_training_boards = parse.pgn_to_boards(labels=False, vectorized=False)
-        self.vector_len = len(vectorize.piece_vector(all_training_boards[0]))
+        all_training_boards = parse.pgn_to_boards(self.num_data_sets, labels=False, vectorize_method=None)
+
         # convert to losing boards
         for i, board in enumerate(all_training_boards):
             board_fen = board.fen()
@@ -43,7 +45,10 @@ class TDLeafLambda:
         # now vectorize boards
         all_vectorized_training_boards = []
         for i, board in enumerate(all_training_boards):
-            all_vectorized_training_boards.append(vectorize.piece_vector(board))
+            all_vectorized_training_boards.append(self.vectorize_method(board))
+
+        # check vector length
+        assert self.vector_len == len(all_vectorized_training_boards[0])
 
         # holders for training board vectors
         x = tf.placeholder(tf.float32, [None, self.vector_len])

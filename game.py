@@ -78,21 +78,21 @@ class Game:
 
         return position_values, board_vectors
 
-multilayer_model = multilayer.Mutlilayer(1000, 10000, 1)
-multilayer_model.train()
+# multilayer_model = multilayer.Mutlilayer(10, 10, 1, 1, vectorize.piece_count_vector, 12)
+# multilayer_model.train()
 
-multilayer_model = evaluation.MultilayerEval(multilayer_model)
-eval1 = multilayer_model.multilayer_eval
-eval2 = multilayer_model.multilayer_eval
+# multilayer_model = evaluation.MultilayerEval(multilayer_model)
+# eval1 = multilayer_model.multilayer_eval
+# eval2 = multilayer_model.multilayer_eval
 
-# sm_model = softmax.Softmax(3000, 1000, 0.01)
-# sm_model.train(print_accuracy=True)
+sm_model = softmax.Softmax(10, 10, 1, 1, vectorize.piece_vector, 46)
+sm_model.train(print_accuracy=True)
 
-# sm_eval = evaluation.SoftmaxEval(sm_model)
-# eval1 = sm_eval.softmax_eval
-# eval2 = sm_eval.softmax_eval
-# #
-# weighted_counter = evaluation.WeightedPieceCount()
+sm_eval = evaluation.SoftmaxEval(sm_model)
+eval1 = sm_eval.softmax_eval
+eval2 = sm_eval.softmax_eval
+#
+weighted_counter = evaluation.WeightedPieceCount()
 # #
 a1 = chess_agents.AlphaBetaAgent(color=chess.WHITE, eval_func=eval1, depth='1')
 a2 = chess_agents.AlphaBetaAgent(color=chess.BLACK, eval_func=eval2, depth='1')
