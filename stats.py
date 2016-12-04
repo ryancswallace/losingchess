@@ -39,13 +39,14 @@ class StatsGenerator:
 			x = sum(no_draws)
 			p_val = binom.pmf(x, n, self.null_p)
 			if p_val < self.sig_level:
-				self.print_results(a2, a1, no_draws, p_val)
-				return a2, [not a for a in a1_victory_history], p_val
-			elif p_val > 1 - self.sig_level:
-				self.print_results(a1, a2, no_draws, p_val)
-				return a1, a1_victory_history, p_val
+				if sum(no_draws) < len(no_draws)/2:
+					self.print_results(a2, a1, no_draws, p_val)
+					return a2, [not a for a in a1_victory_history], p_val
+				else:
+					self.print_results(a1, a2, no_draws, p_val)
+					return a1, a1_victory_history, p_val
 
-		self.print_results(a1, a3, a1_victory_history, p_val)
+		self.print_results(a1, a2, a1_victory_history, p_val)
 		return a1, a1_victory_history, p_val
 
 	def print_results(self, win_agent, lose_agent, history, p):
@@ -53,19 +54,17 @@ class StatsGenerator:
 		if p > .5:
 			p = 1 - p
 
-		if p < self.sig_level:
-			print
-			print "Agent with evaluator '" + win_agent.eval_func.im_func.func_name + "' and depth " + str(win_agent.depth)
-			print "dominates agent with evaluator '" + lose_agent.eval_func.im_func.func_name + "' and depth " + str(lose_agent.depth)
-			print "with p-value: " + str(p)
-			print "in " + str(sum(history)) + " out of " + str(len(history)) + " games."
-			print
-			return
+		print
+		print win_agent.__class__.__name__ + " with evaluator '" + str(win_agent.eval_func.im_class)[11:] + "' and depth " + str(win_agent.depth)
+		print "wins " + str(sum(history)) + " out of " + str(len(history)) + " games against"
+		print lose_agent.__class__.__name__ + " with evaluator '" + str(lose_agent.eval_func.im_class)[11:] + "' and depth " + str(lose_agent.depth)
+		print "p-value: " + str(p)
+		print
+		if p > self.sig_level:
+			print "No significant difference found."
 
 		print
-		print "No significant difference found."
-		print
-
+		return
 
 
 if __name__ == "__main__":
