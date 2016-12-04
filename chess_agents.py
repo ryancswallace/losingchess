@@ -36,6 +36,7 @@ class HumanAgent(Agent):
 
 class RandomAgent(Agent):
     def get_move(self, game_state):
+        print "randoming"
         moves = game_state.board.get_legal_moves()
         if len(moves) == 0:
             return None
@@ -48,6 +49,7 @@ class AlphaBetaAgent(Agent):
         """
         Return minimax move using self.depth, self.eval_func, and alpha-beta pruning.
         """
+        print "eval"
         moves = game_state.board.get_legal_moves()
         if len(moves) == 0:
             return None
@@ -112,7 +114,7 @@ class AlphaBetaAgent(Agent):
                 mvValue = self._alpha_beta_value(mv, next_state, alpha, beta, depth, next_color)
                 v = max(v, mvValue)
                 # prune if value is great enough
-            if v >= beta:
+            if v > beta:
                 return v
             alpha = max(alpha, v)
             return v
@@ -131,7 +133,7 @@ class AlphaBetaAgent(Agent):
                 mvValue = self._alpha_beta_value(mv, next_state, alpha, beta, depth, next_color)
                 v = min(v, mvValue)
                 #prune if value is small enough
-                if v <= alpha:
+                if v < alpha:
                     return v
                 beta = min(beta, v)
             return v
