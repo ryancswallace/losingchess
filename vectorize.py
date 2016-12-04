@@ -66,6 +66,9 @@ def piece_vector(board):
     black_attacked = 0
     black_supported = 0
 
+    white_pawn_dist = 0
+    black_pawn_dist = 0
+
     for ptype in piece_types:
         white_set = board.pieces(ptype, chess.WHITE)
         black_set = board.pieces(ptype, chess.BLACK)
@@ -81,11 +84,18 @@ def piece_vector(board):
                 black_set = list(black_set)[:8] 
 
             for p_square in white_set:
-                out_vec.append(p_square + 1)
-            out_vec += [0] * (8 - len(white_set))
+                out_vec.append(chess.file_index(p_square) + 1)
+                out_vec.append(chess.rank_index(p_square) + 1)
+                # TODO doesn't handle promotions
+                end_dist = (7 - (chess.rank_index(chess.H8) - chess.rank_index(p_square))) ** 2
+                white_pawn_dist += end_dist
+            out_vec += [0] * (16 - len(white_set) * 2)
             for p_square in black_set:
-                out_vec.append(p_square + 1)
-            out_vec += [0] * (8 - len(black_set))
+                out_vec.append(chess.file_index(p_square) + 1)
+                out_vec.append(chess.rank_index(p_square) + 1)
+                end_dist = (7 - (chess.rank_index(p_square) - chess.rank_index(chess.H1))) ** 2
+                black_pawn_dist += end_dist
+            out_vec += [0] * (16 - len(black_set) * 2)
         elif ptype == chess.KNIGHT:
             if len(white_set) > 2:
                 white_set = list(white_set)[:2]
@@ -95,11 +105,13 @@ def piece_vector(board):
             if len(white_set) > 8:
                 white_set = white_set[:8] 
             for n_square in white_set:
-                out_vec.append(n_square + 1)
-            out_vec += [0] * (2 - len(white_set))
+                out_vec.append(chess.file_index(n_square) + 1)
+                out_vec.append(chess.rank_index(n_square) + 1)
+            out_vec += [0] * (4 - len(white_set) * 2)
             for n_square in black_set:
-                out_vec.append(n_square + 1)
-            out_vec += [0] * (2 - len(black_set))
+                out_vec.append(chess.file_index(n_square) + 1)
+                out_vec.append(chess.rank_index(n_square) + 1)
+            out_vec += [0] * (4 - len(black_set) * 2)
         elif ptype == chess.BISHOP:
             if len(white_set) > 2:
                 white_set = list(white_set)[:2]
@@ -107,11 +119,13 @@ def piece_vector(board):
                 black_set = list(black_set)[:2]
 
             for b_square in white_set:
-                out_vec.append(b_square + 1)
-            out_vec += [0] * (2 - len(white_set))
+                out_vec.append(chess.file_index(b_square) + 1)
+                out_vec.append(chess.rank_index(b_square) + 1)
+            out_vec += [0] * (4 - len(white_set) * 2)
             for b_square in black_set:
-                out_vec.append(b_square + 1)
-            out_vec += [0] * (2 - len(black_set))
+                out_vec.append(chess.file_index(b_square) + 1)
+                out_vec.append(chess.rank_index(b_square) + 1)
+            out_vec += [0] * (4 - len(black_set) * 2)
         elif ptype == chess.ROOK:
             if len(white_set) > 2:
                 white_set = list(white_set)[:2]
@@ -119,11 +133,13 @@ def piece_vector(board):
                 black_set = list(black_set)[:2]
 
             for r_square in white_set:
-                out_vec.append(r_square + 1)
-            out_vec += [0] * (2 - len(white_set))
+                out_vec.append(chess.file_index(r_square) + 1)
+                out_vec.append(chess.rank_index(r_square) + 1)
+            out_vec += [0] * (4 - len(white_set) * 2)
             for r_square in black_set:
-                out_vec.append(r_square + 1)
-            out_vec += [0] * (2 - len(black_set))
+                out_vec.append(chess.file_index(r_square) + 1)
+                out_vec.append(chess.rank_index(r_square) + 1)
+            out_vec += [0] * (4 - len(black_set) * 2)
         elif ptype == chess.QUEEN:
             if len(white_set) > 1:
                 white_set = list(white_set)[:1]
@@ -131,11 +147,13 @@ def piece_vector(board):
                 black_set = list(black_set)[:1]
 
             for q_square in white_set:
-                out_vec.append(q_square + 1)
-            out_vec += [0] * (1- len(white_set))
+                out_vec.append(chess.file_index(q_square) + 1)
+                out_vec.append(chess.rank_index(q_square) + 1)
+            out_vec += [0] * (2 - len(white_set) * 2)
             for q_square in black_set:
-                out_vec.append(q_square + 1)
-            out_vec += [0] * (1 - len(black_set))
+                out_vec.append(chess.file_index(q_square) + 1)
+                out_vec.append(chess.rank_index(q_square) + 1)
+            out_vec += [0] * (2 - len(black_set) * 2)
         else:
             if len(white_set) > 1:
                 white_set = list(white_set)[:1]
@@ -143,11 +161,13 @@ def piece_vector(board):
                 black_set = list(black_set)[:1]
 
             for k_square in white_set:
-                out_vec.append(k_square + 1)
-            out_vec += [0] * (1 - len(white_set))
+                out_vec.append(chess.file_index(k_square) + 1)
+                out_vec.append(chess.rank_index(k_square) + 1)
+            out_vec += [0] * (2 - len(white_set) * 2)
             for k_square in black_set:
-                out_vec.append(k_square + 1)
-            out_vec += [0] * (1 - len(black_set))
+                out_vec.append(chess.file_index(k_square) + 1)
+                out_vec.append(chess.rank_index(k_square) + 1)
+            out_vec += [0] * (2 - len(black_set) * 2)
 
         for square in white_set:
             if board.is_attacked_by(chess.BLACK, square):
