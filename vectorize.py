@@ -177,6 +177,4 @@ def piece_vector(board):
     else:
         out_vec.append(int(board.turn))
 
-
-
     return out_vec
