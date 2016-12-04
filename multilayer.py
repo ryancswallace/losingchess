@@ -1,5 +1,4 @@
 import parse
-
 import vectorize
 
 import random

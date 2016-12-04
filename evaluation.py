@@ -14,8 +14,12 @@ naive_weights = {chess.PAWN: 1,
                  chess.ROOK: 3,
                  chess.QUEEN: 6}
 
-class WeightedPieceCount:
-    def weighted_piece_count(self, game_state, color):
+class Evaluator:
+    def evaluate(self, game_state, color):
+        raise Exception("Undefined!")
+
+class WeightedPieceCount(Evaluator):
+    def evaluate(self, game_state, color):
         pieces = game_state.piece_counts
 
         tot = 0
@@ -24,11 +28,11 @@ class WeightedPieceCount:
 
         return tot
 
-class AntiPawn:
-    def anti_pawn(self, game_state, color):
+class AntiPawn(Evaluator):
+    def evaluate(self, game_state, color):
         return -game_state.piece_counts[color][chess.PAWN]
 
-class WeightedPieceCountWCaptures:
+class WeightedPieceCountWCaptures(Evaluator):
     def captures_present(self, game_state, color):
         # for all legal moves
         legal_moves = game_state.get_legal_moves()
@@ -38,14 +42,14 @@ class WeightedPieceCountWCaptures:
                 return True
         return False
 
-    def weighted_piece_count_w_captures(self, game_state, color):        
+    def evaluate(self, game_state, color):        
         weighted_piece_counter = WeightedPieceCount()
         if self.captures_present(game_state, color):
             return weighted_piece_counter.weighted_piece_count(game_state, color) - 5
         else:
             return weighted_piece_counter.weighted_piece_count(game_state, color) + 5
 
-class SoftmaxEval:
+class SoftmaxEval(Evaluator):
     def __init__(self, softmax_model):
         self.softmax_model = softmax_model
         if self.softmax_model.W is None or self.softmax_model.b is None:
@@ -66,7 +70,7 @@ class SoftmaxEval:
         # define model with weights and biases calculated
         self.y = tf.nn.softmax(tf.matmul(self.x, W) + b)
 
-    def softmax_eval(self, game_state, color):
+    def evaluate(self, game_state, color):
         board_vector = self.softmax_model.vectorize_method(game_state.board)
 
         # predict new board
@@ -78,7 +82,7 @@ class SoftmaxEval:
         else:
             return 2 - pred
 
-class MultilayerEval:
+class MultilayerEval(Evaluator):
     def __init__(self, multilayer_model):
         self.multilayer_model = multilayer_model
         if self.multilayer_model.W is None or self.multilayer_model.b is None:
@@ -95,7 +99,7 @@ class MultilayerEval:
         # define model with weights and biases calculated
         self.y = multilayer_model.multilayer_perceptron(self.x, self.multilayer_model.W, self.multilayer_model.b)
 
-    def multilayer_eval(self, game_state, color):
+    def evaluate(self, game_state, color):
         board_vector = self.multilayer_model.vectorize_method(game_state.board)
 
         # score new board
@@ -110,7 +114,7 @@ class MultilayerEval:
             print preds[0] - preds[2]
             return preds[0] - preds[2]
 
-class TDTrainEval:
+class TDTrainEval(Evaluator):
     def __init__(self, model):
         self.model = model
         if self.model.W is None or self.model.b is None:
@@ -131,7 +135,7 @@ class TDTrainEval:
         # define model with weights and biases calculated
         self.y = tf.nn.softmax(tf.matmul(self.x, W) + b)
 
-    def eval(self, game_state, color):
+    def evaluate(self, game_state, color):
         board_vector = self.model.vectorize_method(game_state.board)
 
         # predict new board

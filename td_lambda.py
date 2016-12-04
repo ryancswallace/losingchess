@@ -126,7 +126,3 @@ class TDLeafLambda:
                 self.b = map(add, self.b, update_vector)
                 print self.W
                 print self.b
-
-
-trainer = TDLeafLambda(3, 5, 0.5, 0.7, 12, False)
-trainer.train()
