@@ -50,7 +50,7 @@ class AlphaBetaAgent(Agent):
         values = {}
         alpha = -99999
         for move in moves:
-            values[move] = self._alpha_beta_value(move, game_state, -99999, 99999, 0, self.color)
+            values[move] = self._alpha_beta_value(move, game_state.board, -99999, 99999, 0, self.color)
             alpha = max(alpha, values[move])
 
         # return action with max utility,
@@ -67,12 +67,12 @@ class AlphaBetaAgent(Agent):
             return best_action
 
 
-    def _alpha_beta_value(self, move, game_state, alpha, beta, depth, color):
+    def _alpha_beta_value(self, move, board, alpha, beta, depth, color):
         """
         Helper function for performing alpha-beta pruning.
         """
         # get next game state
-        next_state = game_state.board.generate_successor(move)
+        next_state = board.generate_successor(move)
 
         # has agent won?
         if next_state.is_game_over():
@@ -107,7 +107,7 @@ class AlphaBetaAgent(Agent):
                 mvValue = self._alpha_beta_value(mv, next_state, alpha, beta, depth, next_color)
                 v = max(v, mvValue)
                 # prune if value is great enough
-            if v > beta:
+            if v >= beta:
                 return v
             alpha = max(alpha, v)
             return v
@@ -126,7 +126,7 @@ class AlphaBetaAgent(Agent):
                 mvValue = self._alpha_beta_value(mv, next_state, alpha, beta, depth, next_color)
                 v = min(v, mvValue)
                 #prune if value is small enough
-                if v < alpha:
+                if v <= alpha:
                     return v
                 beta = min(beta, v)
             return v

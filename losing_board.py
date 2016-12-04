@@ -173,27 +173,62 @@ class LosingBoard:
 
             if piece:
                 sym = piece.symbol()
-                if square == end_green_square:
-                    # green
-                    builder.append("\033[32m" + sym + "\033[0m")
-                elif sym.isupper():
-                    # red
-                    builder.append("\033[31m" + sym + "\033[0m")
+                if square in chess.SquareSet(chess.BB_DARK_SQUARES):
+                    if square == end_green_square:
+                        # green
+                        builder.append("\033[48;5;0m\033[32m" + sym + "\033[0m")
+                    elif sym.isupper():
+                        # red
+                        builder.append("\033[48;5;0m\033[31m" + sym + "\033[0m")
+                    else:
+                        # blue
+                        builder.append("\033[48;5;0m\033[34m" + sym + "\033[0m")
                 else:
-                    # blue
-                    builder.append("\033[34m" + sym + "\033[0m")
+                    if square == end_green_square:
+                        # green
+                        builder.append("\033[48;5;222m\033[32m" + sym + "\033[0m")
+                    elif sym.isupper():
+                        # red
+                        builder.append("\033[48;5;222m\033[31m" + sym + "\033[0m")
+                    else:
+                        # blue
+                        builder.append("\033[48;5;222m\033[34m" + sym + "\033[0m")
             else:
                 if square == start_green_square:
                     # green background
                     builder.append("\033[42m \033[0m")
                 else:
-                    builder.append(".")
+                    # builder.append(".")
+                    if square in chess.SquareSet(chess.BB_DARK_SQUARES):
+                        builder.append("\033[48;5;0m \033[0m")
+                    else:
+                        builder.append("\033[48;5;222m \033[0m")
 
             if chess.BB_SQUARES[square] & chess.BB_FILE_H:
                 if square != chess.H1:
-                    builder.append("\n")
+                    if square == start_green_square:
+                        # green background
+                        builder.append("\033[42m \033[0m\n")
+                    elif square in chess.SquareSet(chess.BB_DARK_SQUARES):
+                        builder.append("\033[48;5;0m \033[0m\n")
+                    else:
+                        builder.append("\033[48;5;222m \033[0m\n")
+                else:
+                    if square == start_green_square:
+                        # green background
+                        builder.append("\033[42m \033[0m")
+                    elif square in chess.SquareSet(chess.BB_DARK_SQUARES):
+                        builder.append("\033[48;5;0m \033[0m")
+                    else:
+                        builder.append("\033[48;5;222m \033[0m")
             else:
-                builder.append(" ")
+                if square == start_green_square:
+                    # green background
+                    builder.append("\033[42m \033[0m")
+                elif square in chess.SquareSet(chess.BB_DARK_SQUARES):
+                    builder.append("\033[48;5;0m \033[0m")
+                else:
+                    builder.append("\033[48;5;222m \033[0m")
 
         return "".join(builder)
         # return str(self.board)
