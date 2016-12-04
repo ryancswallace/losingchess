@@ -147,6 +147,9 @@ class LosingBoard:
     def is_seventyfive_moves(self):
         return self.board.is_seventyfive_moves()
 
+    def is_attacked_by(self, color, square):
+        return self.board.is_attacked_by(color, square)
+
     def __str__(self):
         builder = []
 

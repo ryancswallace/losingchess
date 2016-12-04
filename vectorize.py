@@ -33,12 +33,6 @@ def square_vector(board):
             out_vec.append(11)
         elif piece.symbol() == 'k':
             out_vec.append(12)
-    
-    # castling rights
-    # out_vec.append(1) if board.has_kingside_castling_rights(chess.WHITE) else out_vec.append(0)
-    # out_vec.append(1) if board.has_kingside_castling_rights(chess.BLACK) else out_vec.append(0)
-    # out_vec.append(1) if board.has_queenside_castling_rights(chess.WHITE) else out_vec.append(0)
-    # out_vec.append(1) if board.has_queenside_castling_rights(chess.BLACK) else out_vec.append(0)
 
     # en passant rights
     if board.has_legal_en_passant():
@@ -65,6 +59,9 @@ def piece_vector(board):
     piece_types = [chess.PAWN, chess.KNIGHT, chess.BISHOP, chess.ROOK, chess.QUEEN, chess.KING]
     white_counts = [0] * 6
     black_counts = [0] * 6
+
+    white_attacked = 0
+    black_attacked = 0
 
     for ptype in piece_types:
         white_set = board.pieces(ptype, chess.WHITE)
@@ -149,15 +146,21 @@ def piece_vector(board):
                 out_vec.append(k_square + 1)
             out_vec += [0] * (1 - len(black_set))
 
+        for square in white_set:
+            if board.is_attacked_by(chess.BLACK, square):
+                white_attacked += 1
+
+        for square in black_set:
+            if board.is_attacked_by(chess.WHITE, square):
+                black_attacked += 1
+
+    # number of pieces on each side under attack
+    out_vec.append(white_attacked)
+    out_vec.append(black_attacked)
+
     # promotions via piece counts
     out_vec += white_counts
     out_vec += black_counts
-
-    # castling rights
-    # out_vec.append(1) if board.has_kingside_castling_rights(chess.WHITE) else out_vec.append(0)
-    # out_vec.append(1) if board.has_kingside_castling_rights(chess.BLACK) else out_vec.append(0)
-    # out_vec.append(1) if board.has_queenside_castling_rights(chess.WHITE) else out_vec.append(0)
-    # out_vec.append(1) if board.has_queenside_castling_rights(chess.BLACK) else out_vec.append(0)
 
     # en passant rights
     if board.has_legal_en_passant():
@@ -173,5 +176,7 @@ def piece_vector(board):
         out_vec.append(int(board.turn()))
     else:
         out_vec.append(int(board.turn))
+
+
 
     return out_vec
