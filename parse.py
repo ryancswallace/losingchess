@@ -1,5 +1,6 @@
 import chess.pgn
 import vectorize
+import os
 
 """
 Given a .pgn file, returns a list of chess.pgn.Game objects
@@ -8,8 +9,7 @@ representing the games.
 def pgn_to_games(pgn_file):
     pgn = open(pgn_file)
     games = []
-    # while True:
-    for _ in range(100):
+    while True:
         try:
             game = chess.pgn.read_game(pgn)
         except ValueError:
@@ -24,8 +24,20 @@ def pgn_to_games(pgn_file):
 
     return games
 
-def pgn_to_boards(pgn_file, labels=False, vectorized=False):
-    games = pgn_to_games(pgn_file)
+def pgn_to_boards(pgn_files=[], labels=False, vectorized=False):
+    games = []
+    if pgn_files == []:
+        dir_path = os.path.dirname(os.path.realpath(__file__))
+        dir_path = os.path.join(dir_path, 'data')
+        pgn_file_names = ['all_losing_' + str(i) + '.pgn' for i in range(9)]
+        for pgn_file_name in pgn_file_names:
+            pgn_files.append(os.path.join(dir_path, pgn_file_name))
+
+    for pgn_file in pgn_files:
+        games += pgn_to_games(pgn_file)
+
+    print 'num games:', len(games)
+    
     board_result_pairs = []
     for game in games:
         # get result of game - 0.5 for draw, 1 for white win, 0 for white loss

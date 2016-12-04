@@ -80,6 +80,38 @@ class SoftmaxEval:
         else:
             return 2 - pred
 
+class MultilayerEval:
+    def __init__(self, multilayer_model):
+        self.multilayer_model = multilayer_model
+        if self.multilayer_model.W is None or self.multilayer_model.b is None:
+            raise Exception('Train multilayer first.')
+
+        # tensor for board_vector
+        self.x = tf.placeholder(tf.float32, [1, self.multilayer_model.n_input])
+
+        self.sess = tf.InteractiveSession()
+        
+        # initialize variables
+        self.sess.run(tf.global_variables_initializer())
+
+        # define model with weights and biases calculated
+        self.y = multilayer_model.multilayer_perceptron(self.x, self.multilayer_model.W, self.multilayer_model.b)
+
+    def multilayer_eval(self, game_state, color):
+        board_vector = vectorize.piece_vector(game_state.board)
+
+        # score new board
+        score = self.y
+        x_np = np.array(board_vector).reshape(1,len(board_vector))
+        preds = self.sess.run(score, feed_dict={self.x: x_np})[0]
+    
+        if color == chess.WHITE:
+            print preds[2] - preds[0]
+            return preds[2] - preds[0]
+        else:
+            print preds[0] - preds[2]
+            return preds[0] - preds[2]
+
 class TDTrainEval:
     def __init__(self, model):
         self.model = model
@@ -112,5 +144,5 @@ class TDTrainEval:
         if color == chess.WHITE:
             return pred
         else:
-            # TODO: fix this
-            return -pred
+            return 1 - pred
+ 

@@ -28,7 +28,7 @@ class TDLeafLambda:
         self.b = None
 
     def train(self):
-        all_training_boards = parse.pgn_to_boards('data/all_losing.pgn', labels=False, vectorized=False)
+        all_training_boards = parse.pgn_to_boards(labels=False, vectorized=False)
         self.vector_len = len(vectorize.piece_vector(all_training_boards[0]))
         # convert to losing boards
         for i, board in enumerate(all_training_boards):

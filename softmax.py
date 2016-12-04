@@ -17,7 +17,7 @@ class Softmax:
 
     def train(self, print_accuracy=False):
         # get vectorized, labeled training data
-        all_training_boards = parse.pgn_to_boards('data/all_losing.pgn', labels=True, vectorized=True)
+        all_training_boards = parse.pgn_to_boards(labels=True, vectorized=True)
         num_boards = len(all_training_boards)
         self.vector_len = len(all_training_boards[0][0])
 
@@ -98,4 +98,3 @@ class Softmax:
             x_np = np.array(board_vector).reshape(1,len(board_vector))
             pred = sess.run(predict, feed_dict={x: x_np})[0]
             return pred
-

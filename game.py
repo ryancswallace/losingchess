@@ -5,6 +5,7 @@ import chess_agents
 import softmax
 import evaluation
 import vectorize
+import multilayer
 
 """
 Here we will build the processes that drive games between two AIs,
@@ -77,7 +78,13 @@ class Game:
 
         return position_values, board_vectors
 
-# # example run with softmax
+multilayer_model = multilayer.Mutlilayer(1000, 10000, 1)
+multilayer_model.train()
+
+multilayer_model = evaluation.MultilayerEval(multilayer_model)
+eval1 = multilayer_model.multilayer_eval
+eval2 = multilayer_model.multilayer_eval
+
 # sm_model = softmax.Softmax(3000, 1000, 0.01)
 # sm_model.train(print_accuracy=True)
 
@@ -87,11 +94,11 @@ class Game:
 # #
 # weighted_counter = evaluation.WeightedPieceCount()
 # #
-# a1 = chess_agents.AlphaBetaAgent(color=chess.WHITE, eval_func=eval1, depth='1')
-# a2 = chess_agents.AlphaBetaAgent(color=chess.BLACK, eval_func=eval2, depth='1')
+a1 = chess_agents.AlphaBetaAgent(color=chess.WHITE, eval_func=eval1, depth='1')
+a2 = chess_agents.AlphaBetaAgent(color=chess.BLACK, eval_func=eval2, depth='1')
 # a1 = chess_agents.AlphaBetaAgent(color=chess.WHITE, eval_func=weighted_counter.weighted_piece_count, depth='1')
 # a2 = chess_agents.AlphaBetaAgent(color=chess.BLACK, eval_func=weighted_counter.weighted_piece_count, depth='1')
-# board = losing_board.LosingBoard(no_kings=False)
+board = losing_board.LosingBoard(no_kings=False)
 
-# game = Game(board, a1, a2)
-# game.play()
+game = Game(board, a1, a2)
+game.play()
