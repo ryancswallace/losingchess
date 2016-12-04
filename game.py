@@ -73,4 +73,3 @@ class Game:
                 break
 
         return position_values, board_vectors
-
