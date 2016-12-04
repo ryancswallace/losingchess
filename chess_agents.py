@@ -28,11 +28,7 @@ class AlphaBetaAgent(Agent):
         """
         Return minimax move using self.depth, self.eval_func, and alpha-beta pruning.
         """
-        print 'before is_seventyfive_moves'
-        print game_state.is_seventyfive_moves()
-        print 'after is_seventyfive_moves'
-
-        moves = game_state.get_legal_moves()
+        moves = game_state.board.get_legal_moves()
         if len(moves) == 0:
             return None
 
@@ -61,7 +57,7 @@ class AlphaBetaAgent(Agent):
         Helper function for performing alpha-beta pruning.
         """
         # get next game state
-        next_state = game_state.generate_successor(move)
+        next_state = game_state.board.generate_successor(move)
 
         # has agent won?
         if next_state.is_game_over():

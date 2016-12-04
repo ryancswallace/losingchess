@@ -1,9 +1,9 @@
-# import chess
+import chess
 
-# import losing_board
-# import chess_agents
-# import softmax
-# import evaluation
+import losing_board
+import chess_agents
+import softmax
+import evaluation
 import vectorize
 
 """
@@ -31,10 +31,8 @@ class Game:
                     break
 
                 # agent finds best move
-                # move_val_pair = agent.get_move(self.board, return_value=True)
-                print 'before getting move'
-                move_val_pair = agent.get_move(self.board, return_value=True)
-                print 'after getting move'
+                move_val_pair = agent.get_move(self, return_value=True)
+
                 # if there are no moves to be made
                 if move_val_pair is None:
                     outer_break = True
@@ -87,12 +85,12 @@ class Game:
 # eval1 = sm_eval.softmax_eval
 # eval2 = sm_eval.softmax_eval
 # #
-# # weighted_counter = evaluation.WeightedPieceCount()
+# weighted_counter = evaluation.WeightedPieceCount()
 # #
 # a1 = chess_agents.AlphaBetaAgent(color=chess.WHITE, eval_func=eval1, depth='1')
 # a2 = chess_agents.AlphaBetaAgent(color=chess.BLACK, eval_func=eval2, depth='1')
-# # a1 = chess_agents.AlphaBetaAgent(color=chess.WHITE, eval_func=weighted_counter.weighted_piece_count, depth='1')
-# # a2 = chess_agents.AlphaBetaAgent(color=chess.BLACK, eval_func=weighted_counter.weighted_piece_count, depth='1')
+# a1 = chess_agents.AlphaBetaAgent(color=chess.WHITE, eval_func=weighted_counter.weighted_piece_count, depth='1')
+# a2 = chess_agents.AlphaBetaAgent(color=chess.BLACK, eval_func=weighted_counter.weighted_piece_count, depth='1')
 # board = losing_board.LosingBoard(no_kings=False)
 
 # game = Game(board, a1, a2)

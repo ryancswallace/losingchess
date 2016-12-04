@@ -40,13 +40,10 @@ class LosingBoard:
         Return list of all legal moves for a color given the current gamestate.
         Since the Board class knows whose turn it is, we need not take a color argument.
         """
-        print 'in get legal moves 1'
-
         legal_moves = []
 
         # get pseudo legal moves under normal chess rules (includes putting king into check)
         chess_legal_moves = self.board.pseudo_legal_moves
-        print 'in get legal moves 2'
         # check for attacking positions
         # if one is found, we only include attacking moves among legal moves
         attacking = False
@@ -54,7 +51,6 @@ class LosingBoard:
             if self.board.piece_at(mv.to_square):
                 legal_moves.append(mv)
                 attacking = True
-        print 'in get legal moves 3'
         if attacking:
             return legal_moves
         else:
@@ -152,5 +148,41 @@ class LosingBoard:
         return self.board.is_seventyfive_moves()
 
     def __str__(self):
-        return str(self.board)
+        builder = []
+
+        last_move = str(self.board.peek())
+        last_move_start = last_move[:2]
+        last_move_end = last_move[2:]
+        start_rank = ord(last_move_start[0]) - ord('a')
+        start_file = int(last_move_start[1])
+        start_green_square = (start_file - 1) * 8 + start_rank
+        end_rank = ord(last_move_end[0]) - ord('a')
+        end_file = int(last_move_end[1])
+        end_green_square = (end_file - 1) * 8 + end_rank
+
+        for square in chess.SQUARES_180:
+            piece = self.piece_at(square)
+
+            if piece:
+                sym = piece.symbol()
+                if square == end_green_square:
+                    builder.append("\033[32m" + sym + "\033[0m")
+                elif sym.isupper():
+                    builder.append("\033[31m" + sym + "\033[0m")
+                else:
+                    builder.append("\033[34m" + sym + "\033[0m")
+            else:
+                if square == start_green_square:
+                    builder.append("\033[42m \033[0m")
+                else:
+                    builder.append(".")
+
+            if chess.BB_SQUARES[square] & chess.BB_FILE_H:
+                if square != chess.H1:
+                    builder.append("\n")
+            else:
+                builder.append(" ")
+
+        return "".join(builder)
+        # return str(self.board)
 
