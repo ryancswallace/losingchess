@@ -28,9 +28,13 @@ class StatsGenerator:
 
         for i in range(self.max_iter):
             tmp_board = deepcopy(board)
-            #random.shuffle(order)
-            g = game.Game(tmp_board, order[0], order[1], get_stats=True)
-            winning_agent = g.play(max_turns=200)
+            winning_agent = None
+            if i % 2 == 0:
+                g = game.Game(tmp_board, a1, a2, get_stats=True)
+                winning_agent = g.play(max_turns=200)
+            else:
+                g = game.Game(tmp_board, a2, a1, get_stats=True)
+                winning_agent = g.play(max_turns=200)
             if winning_agent == chess.WHITE:
                 a1_victory_history.append(True)
             else:
