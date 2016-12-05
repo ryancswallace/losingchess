@@ -38,7 +38,10 @@ class Game:
                         if self.get_stats:
                             return None
                     else:
-                        print "Because it's a stalemate, Agent " + str(int(winner)) + " victorious!"
+                        agent_num = 2 if int(winner) == 0 else 1
+                        print "Because it's a stalemate, Agent " + str(agent_num) + " victorious!"
+                        if self.get_stats:
+                            return winner
                 
                 # if there are moves to be made
                 else:
@@ -52,10 +55,9 @@ class Game:
                         position_values.append(val)
                         board_vectors.append(vectorize.piece_vector(self.board))
 
-                    # print board 
-                    print "Agent " + str(turn + 1) + " makes move: "+ str(mv)
-                    print self.board
-                    print '\n'
+                    # print "Agent " + str(turn + 1) + " makes move: "+ str(mv)
+                    # print self.board
+                    # print '\n'
 
                     # switch players
                     turn = not turn
@@ -66,6 +68,8 @@ class Game:
 
                     if self.board.is_game_over():
                         print "Agent " + str(turn + 1) + " victorious in " + str(self.board.board.fullmove_number) + " plies.\n"
+                        if self.get_stats:
+                            return turn == 0
                         outer_break = True
 
             # update turn numbers
@@ -73,10 +77,20 @@ class Game:
                 outer_break = True
 
             # check that game didn't end on last move
-            if outer_break: 
+            if outer_break:
+                if agent == self.a1:
+                    agent = self.a2
+
+                else:
+                    agent = self.a1
                 break
         
         if self.get_stats:
-            return agent
+            if agent == self.a1:
+                print 'agent is a1'
+
+            if agent == self.a2:
+                print 'agent is a2'
+
         else:
             return position_values, board_vectors
