@@ -45,9 +45,9 @@ class WeightedPieceCountWCaptures(Evaluator):
     def evaluate(self, game_state, color):        
         weighted_piece_counter = WeightedPieceCount()
         if self.captures_present(game_state, color):
-            return weighted_piece_counter.weighted_piece_count(game_state, color) - 5
+            return weighted_piece_counter.evaluate(game_state, color) - 5
         else:
-            return weighted_piece_counter.weighted_piece_count(game_state, color) + 5
+            return weighted_piece_counter.evaluate(game_state, color) + 5
 
 class SoftmaxEval(Evaluator):
     def __init__(self, softmax_model):
