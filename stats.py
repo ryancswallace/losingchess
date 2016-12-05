@@ -27,11 +27,11 @@ class StatsGenerator:
 
 		for i in range(self.max_iter):
 			tmp_board = deepcopy(board)
-			random.shuffle(order)
+			# random.shuffle(order)
 			g = game.Game(tmp_board, order[0], order[1], get_stats=True)
 			winning_agent = g.play(max_turns=200)
-			a1_victory_history.append(winning_agent == a1 if winning_agent is not None else None)
-
+			a1_victory_history.append(winning_agent == a1 and order[0] == a1 if winning_agent is not None else None)
+			print a1_victory_history
 			# check if significance has been reached, excluding draws
 
 			no_draws = [g for g in a1_victory_history if g is not None]
