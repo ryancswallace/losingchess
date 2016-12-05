@@ -1,4 +1,5 @@
 import vectorize
+import chess
 
 """
 Here we will build the processes that drive games between two AIs,
@@ -31,14 +32,28 @@ class Game:
 
                 # if there are no moves to be made
                 if move_val_pair is None:
+                    print 'stalemate'
                     outer_break = True
                     winner = self.board.winner_by_pieces()
-                    if winner == 0.5:
+                    if winner == chess.WHITE:
+                        print "Because it's a stalemate, Agent 1 victorious!"
+                        if self.get_stats:
+                            return self.a1
+
+                    elif winner == chess.BLACK:
+                        print "Because it's a stalemate, Agent 1 victorious!"
+                        if self.get_stats:
+                            return self.a2
+
+                    elif winner == 0.5:
                         print "It's a draw in " + str(self.board.board.fullmove_number) + " plies.\n"
                         if self.get_stats:
+                            print 'draw, returning None'
                             return None
+
                     else:
-                        print "Because it's a stalemate, Agent " + str(int(winner)) + " victorious!"
+                        print 'Impossible.'
+                        raise Exception
                 
                 # if there are moves to be made
                 else:
@@ -73,10 +88,15 @@ class Game:
                 outer_break = True
 
             # check that game didn't end on last move
-            if outer_break: 
+            if outer_break:
+                if agent == self.a1:
+                    agent = self.a2
+                else:
+                    agent = self.a1
                 break
         
         if self.get_stats:
+            print 'winner:, returning ', agent
             return agent
         else:
             return position_values, board_vectors
