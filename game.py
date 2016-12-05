@@ -55,9 +55,9 @@ class Game:
                         position_values.append(val)
                         board_vectors.append(vectorize.piece_vector(self.board))
 
-                    # print "Agent " + str(turn + 1) + " makes move: "+ str(mv)
-                    # print self.board
-                    # print '\n'
+                    print "Agent " + str(turn + 1) + " makes move: "+ str(mv)
+                    print self.board
+                    print '\n'
 
                     # switch players
                     turn = not turn
@@ -65,6 +65,8 @@ class Game:
                     if self.board.is_seventyfive_moves():
                         outer_break = True
                         print "It's a draw due to 75 moves."
+                        if self.get_stats:
+                            return None
 
                     if self.board.is_game_over():
                         print "Agent " + str(turn + 1) + " victorious in " + str(self.board.board.fullmove_number) + " plies.\n"
@@ -78,19 +80,6 @@ class Game:
 
             # check that game didn't end on last move
             if outer_break:
-                if agent == self.a1:
-                    agent = self.a2
-
-                else:
-                    agent = self.a1
                 break
-        
-        if self.get_stats:
-            if agent == self.a1:
-                print 'agent is a1'
 
-            if agent == self.a2:
-                print 'agent is a2'
-
-        else:
-            return position_values, board_vectors
+        return position_values, board_vectors
