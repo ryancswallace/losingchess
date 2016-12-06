@@ -56,13 +56,8 @@ Necessary code for running a class method in parallel.
 Essentially, tells python how to convert a method that is built into a class 
 to a standalone binary file (since this is necessary for multiprocesing).
 
-<<<<<<< HEAD
-citation: dano, 
-http://stackoverflow.com/questions/25156768/cant-pickle-type-instancemethod-using-pythons-multiprocessing-pool-apply-a
-=======
 citation: dano, http://stackoverflow.com/questions/25156768
           /cant-pickle-type-instancemethod-using-pythons-multiprocessing-pool-apply-a
->>>>>>> d2bb10f83565404fa7b92e2a2ab7569a6011f55a
 """
 def _pickle_method(m):
     if m.im_self is None:
@@ -154,7 +149,7 @@ class MinimaxAgent(Agent):
             return v
 
 class AlphaBetaAgent(Agent):
-    def get_move(self, game_state, return_value=False):
+    def get_move(self, game_state, return_value=False, parallelize=False):
         """
         Return minimax move using self.depth, self.eval_func, and alpha-beta pruning.
         """
@@ -162,15 +157,22 @@ class AlphaBetaAgent(Agent):
         if len(moves) == 0:
             return None
 
-        get_ab_value = partial( self._alpha_beta_value, board=game_state.board,
-                                alpha=-99999, beta=99999, depth=0,
-                                color=self.color)
+        if parallelize:
+            get_ab_value = partial( self._alpha_beta_value, board=game_state.board,
+                                    alpha=-99999, beta=99999, depth=0,
+                                    color=self.color)
 
-        p = Pool(8)
-        values = p.map_async(get_ab_value, moves).get(99999)
-        p.terminate()
+            p = Pool(8)
+            values = p.map_async(get_ab_value, moves).get(99999)
+            p.terminate()
 
-        values = {mv: v for mv, v in zip(moves, values)}
+            values = {mv: v for mv, v in zip(moves, values)}
+
+        else:
+            values = {}
+            for move in moves:
+                values[move] = self._alpha_beta_value(move, game_state.board, alpha=-99999, beta=99999, 
+                                                      depth=0, color=self.color)
 
         # return action with max utility,
         # random action if there's a tie

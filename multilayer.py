@@ -45,7 +45,6 @@ class Mutlilayer:
     def train(self):
         # get vectorized, labeled training data
         all_training_boards = parse.pgn_to_boards(self.num_data_sets, labels=True, vectorize_method=self.vectorize_method)
-
         
         # confirm feature length
         assert self.n_input == len(all_training_boards[0][0])
