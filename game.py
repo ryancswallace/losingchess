@@ -38,7 +38,10 @@ class Game:
                         if self.get_stats:
                             return None
                     else:
-                        print "Because it's a stalemate, Agent " + str(int(winner) + 1) + " victorious!"
+                        agent_num = 2 if int(winner) == 0 else 1
+                        print "Because it's a stalemate, Agent " + str(agent_num) + " victorious!"
+                        if self.get_stats:
+                            return winner
                 
                 # if there are moves to be made
                 else:
@@ -52,7 +55,6 @@ class Game:
                         position_values.append(val)
                         board_vectors.append(vectorize.piece_vector(self.board))
 
-                    # print board 
                     print "Agent " + str(turn + 1) + " makes move: "+ str(mv)
                     print self.board
                     print '\n'
@@ -63,9 +65,13 @@ class Game:
                     if self.board.is_seventyfive_moves():
                         outer_break = True
                         print "It's a draw due to 75 moves."
+                        if self.get_stats:
+                            return None
 
                     if self.board.is_game_over():
                         print "Agent " + str(turn + 1) + " victorious in " + str(self.board.board.fullmove_number) + " plies.\n"
+                        if self.get_stats:
+                            return turn == 0
                         outer_break = True
 
             # update turn numbers
@@ -73,10 +79,7 @@ class Game:
                 outer_break = True
 
             # check that game didn't end on last move
-            if outer_break: 
+            if outer_break:
                 break
-        
-        if self.get_stats:
-            return agent
-        else:
-            return position_values, board_vectors
+
+        return position_values, board_vectors
