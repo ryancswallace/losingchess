@@ -7,12 +7,11 @@ import sys
 import StringIO
 import random
 from copy import deepcopy
-import scipy
 from scipy.stats import binom
 
 class StatsGenerator:
 
-    def __init__(self, sig_level, max_iter=30, null_p=.5, stop_at_significance=True):
+    def __init__(self, sig_level, max_iter=30, null_p=.5, stop_at_significance=False):
 
         self.sig_level = sig_level
         self.null_p = null_p
@@ -41,18 +40,18 @@ class StatsGenerator:
                 a1_victory_history.append(False)
 
             # check if significance has been reached, excluding draws
-
             no_draws = [g for g in a1_victory_history if g is not None]
             n = len(no_draws)
             x = sum(no_draws)
-            p_val = binom.pmf(x, n, self.null_p)
-            if p_val < self.sig_level:
-                if sum(no_draws) < len(no_draws)/2:
-                    self.print_results(a2, a1, no_draws, p_val)
-                    return a2, [not a for a in a1_victory_history], p_val
-                else:
-                    self.print_results(a1, a2, no_draws, p_val)
-                    return a1, a1_victory_history, p_val
+            p_val = binom.cdf(x, n, self.null_p)
+            if self.stop_at_significance:
+                if p_val < self.sig_level/2 or p_val > 1 - self.sig_level/2:
+                    if sum(no_draws) < len(no_draws)/2:
+                        self.print_results(a2, a1, no_draws, p_val)
+                        return a2, [not a for a in a1_victory_history], p_val
+                    else:
+                        self.print_results(a1, a2, no_draws, p_val)
+                        return a1, a1_victory_history, p_val
 
         self.print_results(a1, a2, a1_victory_history, p_val)
         return a1, a1_victory_history, p_val
@@ -80,13 +79,11 @@ if __name__ == "__main__":
     anti_pawn = evaluation.AntiPawn()
     counter1 = evaluation.WeightedPieceCount()
 
-
     # softmax = evaluation.SoftmaxEval()
-
     a1 = chess_agents.AlphaBetaAgent(color=chess.WHITE, eval_func=anti_pawn.evaluate, depth=1, ant_eval_func=anti_pawn.evaluate)
     a2 = chess_agents.AlphaBetaAgent(color=chess.BLACK, eval_func=anti_pawn.evaluate, depth=0, ant_eval_func=anti_pawn.evaluate)
     board = losing_board.LosingBoard(no_kings=False)
 
-    s = StatsGenerator(.05)
+    s = StatsGenerator(.05, max_iter=10)
     out = s.compare_agents(a1, a2, board)
 
