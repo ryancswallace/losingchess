@@ -56,13 +56,8 @@ Necessary code for running a class method in parallel.
 Essentially, tells python how to convert a method that is built into a class 
 to a standalone binary file (since this is necessary for multiprocesing).
 
-<<<<<<< HEAD
-citation: dano, 
-http://stackoverflow.com/questions/25156768/cant-pickle-type-instancemethod-using-pythons-multiprocessing-pool-apply-a
-=======
 citation: dano, http://stackoverflow.com/questions/25156768
           /cant-pickle-type-instancemethod-using-pythons-multiprocessing-pool-apply-a
->>>>>>> d2bb10f83565404fa7b92e2a2ab7569a6011f55a
 """
 def _pickle_method(m):
     if m.im_self is None:
@@ -176,7 +171,8 @@ class AlphaBetaAgent(Agent):
         else:
             values = {}
             for move in moves:
-                values[move] = self.get_value(move, game_state.board, 0, self.color)
+                values[move] = self._alpha_beta_value(move, game_state.board, alpha=-99999, beta=99999, 
+                                                      depth=0, color=self.color)
 
         # return action with max utility,
         # random action if there's a tie
