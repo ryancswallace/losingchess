@@ -80,11 +80,10 @@ if __name__ == "__main__":
     anti_pawn = evaluation.AntiPawn()
     counter1 = evaluation.WeightedPieceCount()
 
-
     # softmax = evaluation.SoftmaxEval()
 
-    a1 = chess_agents.AlphaBetaAgent(color=chess.WHITE, eval_func=anti_pawn.evaluate, depth=1)
-    a2 = chess_agents.AlphaBetaAgent(color=chess.BLACK, eval_func=anti_pawn.evaluate, depth=0)
+    a1 = chess_agents.AlphaBetaAgent(color=chess.WHITE, eval_func=anti_pawn.evaluate, depth=1, ant_eval_func=anti_pawn.evaluate)
+    a2 = chess_agents.AlphaBetaAgent(color=chess.BLACK, eval_func=anti_pawn.evaluate, depth=0, ant_eval_func=anti_pawn.evaluate)
     board = losing_board.LosingBoard(no_kings=False)
 
     s = StatsGenerator(.05)
