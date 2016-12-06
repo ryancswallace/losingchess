@@ -44,6 +44,7 @@ class HumanAgent(Agent):
 class RandomAgent(Agent):
     def get_move(self, game_state):
         moves = game_state.board.get_legal_moves()
+        print len(moves)
         if len(moves) == 0:
             return None
         else:

@@ -6,6 +6,7 @@ import softmax
 import multilayer
 import td_lambda
 import time
+from copy import deepcopy
 
 def play_game(agent_1, eval_func_1, depth_1, agent_2, eval_func_2, depth_2, td_parameters, softmax_parameters, multilayer_parameters, board=losing_board.LosingBoard(no_kings=False)):
     # agent 1 evaluator
@@ -53,14 +54,15 @@ def play_game(agent_1, eval_func_1, depth_1, agent_2, eval_func_2, depth_2, td_p
         evaluator_2 = eval_func_2().evaluate
 
     # construct final agents, and game
-    a1 = agent_1(color=chess.WHITE, eval_func=evaluator_1, depth=depth_1)
-    a2 = agent_2(color=chess.BLACK, eval_func=evaluator_2, depth=depth_2)
- 
-    game_to_play = game.Game(board, a1, a2)
+    a1 = agent_1(color=chess.WHITE, eval_func=evaluator_1, ant_eval_func=evaluator_2, depth=depth_1)
+    a2 = agent_2(color=chess.BLACK, eval_func=evaluator_2, ant_eval_func=evaluator_1, depth=depth_2)
 
     # begin
     start = time.time()
-    game_to_play.play()
+    for i in range(100):
+        tmp_board = deepcopy(board)
+        game_to_play = game.Game(tmp_board, a1, a2)
+        game_to_play.play()
     end = time.time()
     print(end - start)
 

@@ -6,7 +6,7 @@ import numpy as np
 Here we'll put our evaluation functions
 """
 
-# I made these up
+# approximate piece values
 naive_weights = {chess.PAWN: 1,
                  chess.KING: 2,
                  chess.KNIGHT: 3,
