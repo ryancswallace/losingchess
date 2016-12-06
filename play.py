@@ -5,6 +5,7 @@ import chess
 import softmax
 import multilayer
 import td_lambda
+import time
 
 def play_game(agent_1, eval_func_1, depth_1, agent_2, eval_func_2, depth_2, td_parameters, softmax_parameters, multilayer_parameters, board=losing_board.LosingBoard(no_kings=False)):
     # agent 1 evaluator
@@ -58,5 +59,8 @@ def play_game(agent_1, eval_func_1, depth_1, agent_2, eval_func_2, depth_2, td_p
     game_to_play = game.Game(board, a1, a2)
 
     # begin
+    start = time.time()
     game_to_play.play()
+    end = time.time()
+    print(end - start)
 

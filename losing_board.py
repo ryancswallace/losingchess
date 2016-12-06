@@ -44,7 +44,6 @@ class LosingBoard:
 
         # get pseudo legal moves under normal chess rules (includes putting king into check)
         chess_legal_moves = self.board.pseudo_legal_moves
-        print 'number of all legal moves:', len(chess_legal_moves)
         # check for attacking positions
         # if one is found, we only include attacking moves among legal moves
         attacking = False
@@ -53,7 +52,6 @@ class LosingBoard:
                 legal_moves.append(mv)
                 attacking = True
         if attacking:
-            print 'moves reduced to :', len(legal_moves)
             return legal_moves
         else:
             # take out castling moves

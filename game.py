@@ -7,6 +7,7 @@ Perhaps we'll use command line arguments to select agent types,
 evaluation functions, number of AIs, a la Berkeley.
 """
 
+
 class Game:
     def __init__(self, board, a1, a2, get_stats=False):
         self.board = board or LosingBoard()
@@ -15,6 +16,7 @@ class Game:
         self.get_stats = get_stats
 
     def play(self, max_turns=None):
+
         position_values = []
         board_vectors = []
         while True:
