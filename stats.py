@@ -3,7 +3,8 @@ import chess
 import chess_agents
 import evaluation
 import losing_board
-import softmax
+import pickle
+import multilayer
 import vectorize
 import sys
 import StringIO
@@ -81,12 +82,12 @@ if __name__ == "__main__":
     anti_pawn = evaluation.AntiPawn()
     counter1 = evaluation.WeightedPieceCount()
 
-    softmax_model = softmax.Softmax(10, 10, 1, 1, vectorize.piece_count_vector)
-    softmax_model.train()
-    softmax_eval = evaluation.Softmax(softmax_model)
+    multilayer_model = multilayer.Multilayer(1000, 10, 3, 1, vectorize.piece_count_vector)
+    multilayer_model.train()
+    multilayer_eval = evaluation.MultilayerEval(multilayer_model)
 
-    a1 = chess_agents.AlphaBetaAgent(color=chess.WHITE, eval_func=softmax_eval.evaluate, depth=1, ant_eval_func=counter1.evaluate)
-    a2 = chess_agents.RandomAgent(color=chess.BLACK, eval_func=anti_pawn.evaluate, depth=0, ant_eval_func=anti_pawn.evaluate)
+    a1 = chess_agents.AlphaBetaAgent(color=chess.WHITE, eval_func=multilayer_eval.evaluate, depth=1, ant_eval_func=counter1.evaluate)
+    a2 = chess_agents.RandomAgent(color=chess.BLACK, eval_func=counter1.evaluate, depth=1, ant_eval_func=multilayer_eval.evaluate)
     board = losing_board.LosingBoard(no_kings=False)
 
     s = StatsGenerator(.05, max_iter=30)

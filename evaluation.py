@@ -107,11 +107,11 @@ class MultilayerEval(Evaluator):
         x_np = np.array(board_vector).reshape(1,len(board_vector))
         preds = self.sess.run(score, feed_dict={self.x: x_np})[0]
     
-        if color == chess.WHITE:
-            print preds[2] - preds[0]
+        if color == chess.BLACK:
+            # print preds[2] - preds[0]
             return preds[2] - preds[0]
         else:
-            print preds[0] - preds[2]
+            # print preds[0] - preds[2]
             return preds[0] - preds[2]
 
 class TDTrainEval(Evaluator):
