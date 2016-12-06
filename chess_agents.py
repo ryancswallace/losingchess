@@ -8,10 +8,11 @@ from functools import partial
 from multiprocessing import Pool
 
 class Agent:
-    def __init__(self, eval_func, color=chess.WHITE, depth=1):
+    def __init__(self, eval_func, ant_eval_func, color=chess.WHITE, depth=1):
         self.color = color
         self.eval_func = eval_func
         self.depth = depth
+        self.ant_eval_func = ant_eval_func
         if self.depth < 0:
             raise Exception("Depth must be >= 0")
 
@@ -231,7 +232,7 @@ class AlphaBetaAgent(Agent):
             # if we've reached a terminal state
             # return terminal value without updating alpha/beta
             if next_moves == []:
-                term_val = self.eval_func(next_state, next_color)
+                term_val = self.ant_eval_func(next_state, next_color)
                 return term_val
 
             # find next action with min utility

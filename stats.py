@@ -12,7 +12,7 @@ from scipy.stats import binom
 
 class StatsGenerator:
 
-    def __init__(self, sig_level, max_iter=10, null_p=.5, stop_at_significance=True):
+    def __init__(self, sig_level, max_iter=30, null_p=.5, stop_at_significance=True):
 
         self.sig_level = sig_level
         self.null_p = null_p
@@ -80,8 +80,11 @@ if __name__ == "__main__":
     anti_pawn = evaluation.AntiPawn()
     counter1 = evaluation.WeightedPieceCount()
 
-    a1 = chess_agents.AlphaBetaAgent(color=chess.WHITE, eval_func=counter1.evaluate, depth=0)
-    a2 = chess_agents.AlphaBetaAgent(color=chess.BLACK, eval_func=counter1.evaluate, depth=0)
+
+    # softmax = evaluation.SoftmaxEval()
+
+    a1 = chess_agents.AlphaBetaAgent(color=chess.WHITE, eval_func=anti_pawn.evaluate, depth=1, ant_eval_func=anti_pawn.evaluate)
+    a2 = chess_agents.AlphaBetaAgent(color=chess.BLACK, eval_func=anti_pawn.evaluate, depth=0, ant_eval_func=anti_pawn.evaluate)
     board = losing_board.LosingBoard(no_kings=False)
 
     s = StatsGenerator(.05)
