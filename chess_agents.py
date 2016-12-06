@@ -55,8 +55,8 @@ Necessary code for running a class method in parallel.
 Essentially, tells python how to convert a method that is built into a class 
 to a standalone binary file (since this is necessary for multiprocesing).
 
-citation: dano, http://stackoverflow.com/questions/25156768
-		  /cant-pickle-type-instancemethod-using-pythons-multiprocessing-pool-apply-a
+citation: dano, 
+http://stackoverflow.com/questions/25156768/cant-pickle-type-instancemethod-using-pythons-multiprocessing-pool-apply-a
 """
 def _pickle_method(m):
 	if m.im_self is None:

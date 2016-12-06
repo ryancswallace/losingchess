@@ -38,7 +38,7 @@ class Game:
                         if self.get_stats:
                             return None
                     else:
-                        print "Because it's a stalemate, Agent " + str(int(winner)) + " victorious!"
+                        print "Because it's a stalemate, Agent " + str(int(winner) + 1) + " victorious!"
                 
                 # if there are moves to be made
                 else:

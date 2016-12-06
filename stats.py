@@ -11,7 +11,7 @@ from scipy.stats import binom
 
 class StatsGenerator:
 
-	def __init__(self, sig_level, max_iter=30, null_p=.5, stop_at_significance=True):
+	def __init__(self, sig_level, max_iter=50, null_p=.5, stop_at_significance=False):
 
 		self.sig_level = sig_level
 		self.null_p = null_p
@@ -37,7 +37,7 @@ class StatsGenerator:
 			no_draws = [g for g in a1_victory_history if g is not None]
 			n = len(no_draws)
 			x = sum(no_draws)
-			p_val = binom.pmf(x, n, self.null_p)
+			p_val = binom.cdf(x, n, self.null_p)
 			if p_val < self.sig_level:
 				if sum(no_draws) < len(no_draws)/2:
 					self.print_results(a2, a1, no_draws, p_val)
@@ -56,7 +56,7 @@ class StatsGenerator:
 
 		print
 		print win_agent.__class__.__name__ + " with evaluator '" + str(win_agent.eval_func.im_class)[11:] + "' and depth " + str(win_agent.depth)
-		print "wins " + str(sum(history)) + " out of " + str(len(history)) + " games against"
+		print "wins " + str(len(history) - sum(history)) + " out of " + str(len(history)) + " games against"
 		print lose_agent.__class__.__name__ + " with evaluator '" + str(lose_agent.eval_func.im_class)[11:] + "' and depth " + str(lose_agent.depth)
 		print "p-value: " + str(p)
 		print
@@ -72,11 +72,11 @@ if __name__ == "__main__":
 	anti_pawn = evaluation.AntiPawn()
 	counter1 = evaluation.WeightedPieceCount()
 
-	a1 = chess_agents.AlphaBetaAgent(color=chess.WHITE, eval_func=counter1.evaluate, depth=1)
-	a2 = chess_agents.AlphaBetaAgent(color=chess.BLACK, eval_func=anti_pawn.evaluate, depth=1)
+	a1 = chess_agents.AlphaBetaAgent(color=chess.WHITE, eval_func=anti_pawn.evaluate, depth=1)
+	a2 = chess_agents.AlphaBetaAgent(color=chess.BLACK, eval_func=counter1.evaluate, depth=1)
 	board = losing_board.LosingBoard(no_kings=False)
 
-	s = StatsGenerator(.1)
+	s = StatsGenerator(.05, max_iter=10)
 	out = s.compare_agents(a1, a2, board)
 
 		
