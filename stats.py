@@ -3,6 +3,8 @@ import chess
 import chess_agents
 import evaluation
 import losing_board
+import softmax
+import vectorize
 import sys
 import StringIO
 import random
@@ -79,11 +81,14 @@ if __name__ == "__main__":
     anti_pawn = evaluation.AntiPawn()
     counter1 = evaluation.WeightedPieceCount()
 
-    # softmax = evaluation.SoftmaxEval()
-    a1 = chess_agents.AlphaBetaAgent(color=chess.WHITE, eval_func=anti_pawn.evaluate, depth=1, ant_eval_func=anti_pawn.evaluate)
-    a2 = chess_agents.AlphaBetaAgent(color=chess.BLACK, eval_func=anti_pawn.evaluate, depth=0, ant_eval_func=anti_pawn.evaluate)
+    softmax_model = softmax.Softmax(10, 10, 1, 1, vectorize.piece_count_vector)
+    softmax_model.train()
+    softmax_eval = evaluation.Softmax(softmax_model)
+
+    a1 = chess_agents.AlphaBetaAgent(color=chess.WHITE, eval_func=softmax_eval.evaluate, depth=1, ant_eval_func=counter1.evaluate)
+    a2 = chess_agents.RandomAgent(color=chess.BLACK, eval_func=anti_pawn.evaluate, depth=0, ant_eval_func=anti_pawn.evaluate)
     board = losing_board.LosingBoard(no_kings=False)
 
-    s = StatsGenerator(.05, max_iter=10)
+    s = StatsGenerator(.05, max_iter=30)
     out = s.compare_agents(a1, a2, board)
 
