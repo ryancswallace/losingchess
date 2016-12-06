@@ -77,13 +77,14 @@ class StatsGenerator:
 if __name__ == "__main__":
 
     anti_pawn = evaluation.AntiPawn()
-    counter1 = evaluation.WeightedPieceCount()
+    counter = evaluation.WeightedPieceCount()
+    random = evaluation.RandomAgent()
 
     # softmax = evaluation.SoftmaxEval()
-    a1 = chess_agents.AlphaBetaAgent(color=chess.WHITE, eval_func=anti_pawn.evaluate, depth=1, ant_eval_func=anti_pawn.evaluate)
-    a2 = chess_agents.AlphaBetaAgent(color=chess.BLACK, eval_func=anti_pawn.evaluate, depth=0, ant_eval_func=anti_pawn.evaluate)
+    a1 = chess_agents.AlphaBetaAgent(color=chess.WHITE, eval_func=counter.evaluate, depth=2, ant_eval_func=random.evaluate)
+    a2 = chess_agents.AlphaBetaAgent(color=chess.BLACK, eval_func=random.evaluate, depth=0, ant_eval_func=counter.evaluate)
     board = losing_board.LosingBoard(no_kings=False)
 
-    s = StatsGenerator(.05, max_iter=10)
+    s = StatsGenerator(.05)
     out = s.compare_agents(a1, a2, board)
 
