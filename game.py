@@ -36,14 +36,14 @@ class Game:
                     winner = self.board.winner_by_pieces()
                     if winner == 0.5:
                         # print "It's a draw in " + str(self.board.board.fullmove_number) + " plies.\n"
-                        print str(self.board.board.fullmove_number)
+                        # print str(self.board.board.fullmove_number)
                         if self.get_stats:
                             return None
                     else:
                         agent_num = 2 if int(winner) == 0 else 1
                         # print "Because it's a stalemate, Agent " + str(agent_num) + " victorious in " \
                         #       + str(self.board.board.fullmove_number) + " plies!"
-                        print str(self.board.board.fullmove_number)
+                        # print str(self.board.board.fullmove_number)
 
                         if self.get_stats:
                             return winner
@@ -70,14 +70,14 @@ class Game:
                     if self.board.is_seventyfive_moves():
                         outer_break = True
                         # print "It's a draw due to 75 moves."
-                        print str(self.board.board.fullmove_number)
+                        # print str(self.board.board.fullmove_number)
 
                         if self.get_stats:
                             return None
 
                     if self.board.is_game_over():
                         # print "Agent " + str(turn + 1) + " victorious in " + str(self.board.board.fullmove_number) + " plies.\n"
-                        print str(self.board.board.fullmove_number)
+                        # print str(self.board.board.fullmove_number)
                         
                         if self.get_stats:
                             return turn == 0

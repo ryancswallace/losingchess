@@ -11,7 +11,7 @@ class LosingBoard:
     The rules:
     -> First player to lose all pieces wins.
     -> Attacking pieces must capture opponent's piece.
-    -> Pawns are automatically promoted to Queens.
+    -> Kings are normal: no castling, check.
     """
 
     def __init__(self, no_kings=False, b_fen='rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'):

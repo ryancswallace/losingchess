@@ -8,11 +8,12 @@ from functools import partial
 from multiprocessing import Pool
 
 class Agent:
-    def __init__(self, eval_func, ant_eval_func, color=chess.WHITE, depth=1):
+    def __init__(self, eval_func, ant_eval_func, color=chess.WHITE, depth=1, parallelize=False):
         self.color = color
         self.eval_func = eval_func
         self.depth = depth
         self.ant_eval_func = ant_eval_func
+        self.parallelize = parallelize
         if self.depth < 0:
             raise Exception("Depth must be >= 0")
 
@@ -149,7 +150,7 @@ class MinimaxAgent(Agent):
             return v
 
 class AlphaBetaAgent(Agent):
-    def get_move(self, game_state, return_value=False, parallelize=False):
+    def get_move(self, game_state, return_value=False):
         """
         Return minimax move using self.depth, self.eval_func, and alpha-beta pruning.
         """
@@ -157,7 +158,7 @@ class AlphaBetaAgent(Agent):
         if len(moves) == 0:
             return None
 
-        if parallelize:
+        if self.parallelize:
             get_ab_value = partial( self._alpha_beta_value, board=game_state.board,
                                     alpha=-99999, beta=99999, depth=0,
                                     color=self.color)
