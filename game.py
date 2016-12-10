@@ -36,14 +36,22 @@ class Game:
                     winner = self.board.winner_by_pieces()
                     print self.board.board.fullmove_number
                     if winner == 0.5:
-                        print "It's a draw in " + str(self.board.board.fullmove_number) + " plies.\n"
+                        # print "It's a draw in " + str(self.board.board.fullmove_number) + " plies.\n"
+                        # print str(self.board.board.fullmove_number)
                         if self.get_stats:
                             return None
                     else:
                         agent_num = 2 if int(winner) == 0 else 1
+<<<<<<< HEAD
                         print str(self.board.board.fullmove_number)
                         print "Because it's a stalemate, Agent " + str(agent_num) + " victorious in " \
                               + str(self.board.board.fullmove_number) + " plies!"
+=======
+                        # print "Because it's a stalemate, Agent " + str(agent_num) + " victorious in " \
+                        #       + str(self.board.board.fullmove_number) + " plies!"
+                        # print str(self.board.board.fullmove_number)
+
+>>>>>>> d00bfb5cf13912989e9a32a35c316124374c04a7
                         if self.get_stats:
                             return winner
                 
@@ -68,14 +76,26 @@ class Game:
 
                     if self.board.is_seventyfive_moves():
                         outer_break = True
+<<<<<<< HEAD
                         print "It's a draw due to 75 moves."
                         print self.board.board.fullmove_number
+=======
+                        # print "It's a draw due to 75 moves."
+                        # print str(self.board.board.fullmove_number)
+
+>>>>>>> d00bfb5cf13912989e9a32a35c316124374c04a7
                         if self.get_stats:
                             return None
 
                     if self.board.is_game_over():
+<<<<<<< HEAD
                         print "Agent " + str(turn + 1) + " victorious in " + str(self.board.board.fullmove_number) + " plies.\n"
                         print self.board.board.fullmove_number
+=======
+                        # print "Agent " + str(turn + 1) + " victorious in " + str(self.board.board.fullmove_number) + " plies.\n"
+                        # print str(self.board.board.fullmove_number)
+                        
+>>>>>>> d00bfb5cf13912989e9a32a35c316124374c04a7
                         if self.get_stats:
                             return turn == 0
                         outer_break = True

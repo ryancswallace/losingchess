@@ -6,8 +6,14 @@ import numpy as np
 Here we'll put our evaluation functions
 """
 
-# approximate piece values
 naive_weights = {chess.PAWN: 1,
+                 chess.KING: 2,
+                 chess.KNIGHT: 3,
+                 chess.BISHOP: 5,
+                 chess.ROOK: 3,
+                 chess.QUEEN: 6}
+
+tuned_weights = {chess.PAWN: 1,
                  chess.KING: 2,
                  chess.KNIGHT: 3,
                  chess.BISHOP: 5,
@@ -19,7 +25,7 @@ class Evaluator:
         raise Exception("Undefined!")
 
 class WeightedPieceCount(Evaluator):
-    def __init__(self, weights=naive_weights):
+    def __init__(self, weights=tuned_weights):
         self.weights = weights
 
     def evaluate(self, game_state, color):
@@ -110,11 +116,11 @@ class MultilayerEval(Evaluator):
         x_np = np.array(board_vector).reshape(1,len(board_vector))
         preds = self.sess.run(score, feed_dict={self.x: x_np})[0]
     
-        if color == chess.WHITE:
-            print preds[2] - preds[0]
+        if color == chess.BLACK:
+            # print preds[2] - preds[0]
             return preds[2] - preds[0]
         else:
-            print preds[0] - preds[2]
+            # print preds[0] - preds[2]
             return preds[0] - preds[2]
 
 class TDTrainEval(Evaluator):

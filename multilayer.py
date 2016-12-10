@@ -3,8 +3,9 @@ import vectorize
 import random
 import numpy as np
 import tensorflow as tf
+import os.path
 
-class Mutlilayer:
+class Multilayer:
     def __init__(self, num_training_iterations, num_sample_positions, num_data_sets, learning_rate, vectorize_method):
         # parameters of training
         self.num_training_iterations = num_training_iterations
@@ -31,6 +32,8 @@ class Mutlilayer:
             'out': tf.Variable(tf.random_normal([self.n_classes]))
         }
 
+        self.model_path = './pickles/model_10_3_1.ckpt'
+
     def multilayer_perceptron(self, x, weights, biases):
         # Hidden layer with RELU activation
         layer_1 = tf.add(tf.matmul(x, weights['h1']), biases['b1'])
@@ -43,45 +46,55 @@ class Mutlilayer:
         return out_layer
 
     def train(self):
-        # get vectorized, labeled training data
-        all_training_boards = parse.pgn_to_boards(self.num_data_sets, labels=True, vectorize_method=self.vectorize_method)
-        
-        # confirm feature length
-        assert self.n_input == len(all_training_boards[0][0])
+        if not os.path.isfile(self.model_path + '.index'):
+            # get vectorized, labeled training data
+            all_training_boards = parse.pgn_to_boards(self.num_data_sets, labels=True, vectorize_method=self.vectorize_method)
 
-        # encode label as one hot vector
-        for i, (board_vector, label) in enumerate(all_training_boards):
-            one_hot_vector = []
-            if label == 0:
-                one_hot_vector = [1,0,0]
-            elif label == 0.5:
-                one_hot_vector = [0,1,0]
-            elif label == 1:
-                one_hot_vector = [0,0,1]
-            else:
-                raise Exception('Invalid label.')
+            # confirm feature length
+            assert self.n_input == len(all_training_boards[0][0])
 
-            all_training_boards[i] = (all_training_boards[i][0], one_hot_vector)
+            # encode label as one hot vector
+            for i, (board_vector, label) in enumerate(all_training_boards):
+                one_hot_vector = []
+                if label == 0:
+                    one_hot_vector = [1,0,0]
+                elif label == 0.5:
+                    one_hot_vector = [0,1,0]
+                elif label == 1:
+                    one_hot_vector = [0,0,1]
+                else:
+                    raise Exception('Invalid label.')
 
-        # holders for training board vectors, and true labels
-        x = tf.placeholder(tf.float32, [None, self.n_input])
-        y_ = tf.placeholder(tf.float32, shape=[None, self.n_classes])
+                all_training_boards[i] = (all_training_boards[i][0], one_hot_vector)
 
-        # Construct model
-        pred = self.multilayer_perceptron(x, self.W, self.b)
+            # holders for training board vectors, and true labels
+            x = tf.placeholder(tf.float32, [None, self.n_input])
+            y_ = tf.placeholder(tf.float32, shape=[None, self.n_classes])
 
-        # Define loss and optimizer
-        cross_entropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(pred, y_))
-        train_step = tf.train.GradientDescentOptimizer(learning_rate=self.learning_rate).minimize(cross_entropy)
+            # Construct model
+            pred = self.multilayer_perceptron(x, self.W, self.b)
+
+            # Define loss and optimizer
+            cross_entropy = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(pred, y_))
+            train_step = tf.train.GradientDescentOptimizer(learning_rate=self.learning_rate).minimize(cross_entropy)
+
+        saver = tf.train.Saver()
 
         with tf.Session() as sess:
-            # initialize variables
-            sess.run(tf.global_variables_initializer())
+            if os.path.isfile(self.model_path + '.index'):
+                saver.restore(sess, self.model_path)
+                print 'Model restored'
+            else:
+                # initialize variables
+                sess.run(tf.global_variables_initializer())
 
-            # run gradient descent number of times specified, using different randomly sampled
-            # subset of boards each time
-            for training_iteration in range(self.num_training_iterations):
-                training_boards = random.sample(all_training_boards, self.num_sample_positions)
-                x_train = [t[0] for t in training_boards]
-                y_train = np.array([t[1] for t in training_boards]).reshape(self.num_sample_positions, 3)
-                train_step.run(feed_dict={x: x_train, y_: y_train})
+                # run gradient descent number of times specified, using different randomly sampled
+                # subset of boards each time
+                for training_iteration in range(self.num_training_iterations):
+                    training_boards = random.sample(all_training_boards, self.num_sample_positions)
+                    x_train = [t[0] for t in training_boards]
+                    y_train = np.array([t[1] for t in training_boards]).reshape(self.num_sample_positions, 3)
+                    train_step.run(feed_dict={x: x_train, y_: y_train})
+
+                save_path = saver.save(sess, self.model_path)
+                print 'Model saved in file ' + save_path
