@@ -42,7 +42,7 @@ class StatsGenerator:
 			else:
 				a1_victory_history.append(False)
 
-			# check if significance has been reached, excluding draws
+			# check if significance has been reached, excluding true draws (with no winner)
 			no_draws = [g for g in a1_victory_history if g is not None]
 			n = len(no_draws)
 			x = sum(no_draws)
