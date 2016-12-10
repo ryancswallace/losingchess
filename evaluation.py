@@ -19,12 +19,15 @@ class Evaluator:
         raise Exception("Undefined!")
 
 class WeightedPieceCount(Evaluator):
+    def __init__(self, weights=naive_weights):
+        self.weights = weights
+
     def evaluate(self, game_state, color):
         pieces = game_state.piece_counts
 
         tot = 0
         for k in pieces[color]:
-            tot -= pieces[color][k]*naive_weights[k]
+            tot -= pieces[color][k]*self.weights[k]
 
         return tot
 
