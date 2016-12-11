@@ -34,6 +34,7 @@ class Game:
                 if move_val_pair is None:
                     outer_break = True
                     winner = self.board.winner_by_pieces()
+                    print self.board.board.fullmove_number
                     if winner == 0.5:
                         # print "It's a draw in " + str(self.board.board.fullmove_number) + " plies.\n"
                         # print str(self.board.board.fullmove_number)
@@ -41,10 +42,9 @@ class Game:
                             return None
                     else:
                         agent_num = 2 if int(winner) == 0 else 1
-                        # print "Because it's a stalemate, Agent " + str(agent_num) + " victorious in " \
-                        #       + str(self.board.board.fullmove_number) + " plies!"
-                        # print str(self.board.board.fullmove_number)
-
+                        print str(self.board.board.fullmove_number)
+                        print "Because it's a stalemate, Agent " + str(agent_num) + " victorious in " \
+                              + str(self.board.board.fullmove_number) + " plies!"
                         if self.get_stats:
                             return winner
                 
@@ -60,25 +60,25 @@ class Game:
                         position_values.append(val)
                         board_vectors.append(vectorize.piece_vector(self.board))
 
-                    # print "Agent " + str(turn + 1) + " makes move: "+ str(mv)
-                    # print self.board
-                    # print '\n'
+                    print "Agent " + str(turn + 1) + " makes move: "+ str(mv)
+                    print self.board
+                    print '\n'
 
                     # switch players
                     turn = not turn
 
                     if self.board.is_seventyfive_moves():
                         outer_break = True
-                        # print "It's a draw due to 75 moves."
-                        # print str(self.board.board.fullmove_number)
+
+                        print "It's a draw due to 75 moves."
+                        print self.board.board.fullmove_number
 
                         if self.get_stats:
                             return None
 
                     if self.board.is_game_over():
-                        # print "Agent " + str(turn + 1) + " victorious in " + str(self.board.board.fullmove_number) + " plies.\n"
-                        # print str(self.board.board.fullmove_number)
-                        
+                        print "Agent " + str(turn + 1) + " victorious in " + str(self.board.board.fullmove_number) + " plies.\n"
+                        print self.board.board.fullmove_number
                         if self.get_stats:
                             return turn == 0
                         outer_break = True
@@ -91,4 +91,5 @@ class Game:
             if outer_break:
                 break
 
+        print self.board.board.fullmove_number
         return position_values, board_vectors
