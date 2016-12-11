@@ -21,10 +21,16 @@ tuned_weights = {chess.PAWN: 1,
                  chess.QUEEN: 6}
 
 class Evaluator:
+    """
+    Evaluator parent class.
+    """
     def evaluate(self, game_state, color):
         raise Exception("Undefined!")
 
 class WeightedPieceCount(Evaluator):
+    """
+    Encourage loss of pieces according to specified weights.
+    """
     def __init__(self, weights=tuned_weights):
         self.weights = weights
 
@@ -38,10 +44,19 @@ class WeightedPieceCount(Evaluator):
         return tot
 
 class AntiPawn(Evaluator):
+    """
+    Encourage loss of pawns only. 
+    """
     def evaluate(self, game_state, color):
         return -game_state.piece_counts[color][chess.PAWN]
 
 class WeightedPieceCountWCaptures(Evaluator):
+    """
+    Weighted piece count that takes into account captures
+    at the next depth.
+
+    Might as well search one depth deeper than use this.
+    """
     def captures_present(self, game_state, color):
         # for all legal moves
         legal_moves = game_state.get_legal_moves()
@@ -59,6 +74,9 @@ class WeightedPieceCountWCaptures(Evaluator):
             return weighted_piece_counter.evaluate(game_state, color) + 5
 
 class SoftmaxEval(Evaluator):
+    """
+    1-layer neural network trained on FICS dataset.
+    """
     def __init__(self, softmax_model):
         self.softmax_model = softmax_model
         if self.softmax_model.W is None or self.softmax_model.b is None:
@@ -92,6 +110,9 @@ class SoftmaxEval(Evaluator):
             return 2 - pred
 
 class MultilayerEval(Evaluator):
+    """
+    Multilayer neural net trained on the FICS dataset.
+    """
     def __init__(self, multilayer_model):
         self.multilayer_model = multilayer_model
         if self.multilayer_model.W is None or self.multilayer_model.b is None:
@@ -124,6 +145,10 @@ class MultilayerEval(Evaluator):
             return preds[0] - preds[2]
 
 class TDTrainEval(Evaluator):
+    """
+    Attempted implementation of the Q-reinforcement learning algorithm 
+    described in Lai (2015). Not yet functional.
+    """
     def __init__(self, model):
         self.model = model
         if self.model.W is None or self.model.b is None:
