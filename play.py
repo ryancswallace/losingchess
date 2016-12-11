@@ -16,7 +16,7 @@ def play_game(agent_1, eval_func_1, depth_1, agent_2, eval_func_2, depth_2, td_p
         evaluator_1 = evaluation.SoftmaxEval(model).evaluate
 
     elif eval_func_1 == evaluation.MultilayerEval:
-        model = multilayer.Mutlilayer(*multilayer_parameters)
+        model = multilayer.Multilayer(*multilayer_parameters)
         model.train()
         evaluator_1 = evaluation.MultilayerEval(model).evaluate
 
@@ -38,7 +38,7 @@ def play_game(agent_1, eval_func_1, depth_1, agent_2, eval_func_2, depth_2, td_p
         evaluator_2 = evaluation.SoftmaxEval(model).evaluate
 
     elif eval_func_2 == evaluation.MultilayerEval:
-        model = multilayer.Mutlilayer(*multilayer_parameters)
+        model = multilayer.Multilayer(*multilayer_parameters)
         model.train()
         evaluator_2 = evaluation.MultilayerEval(model).evaluate
 
