@@ -80,18 +80,33 @@ class StatsGenerator:
 if __name__ == "__main__":
 
     # anti_pawn = evaluation.AntiPawn()
-    counter = evaluation.WeightedPieceCount()
+    naive_weights = {chess.PAWN: 1,
+                 chess.KNIGHT: 3,
+                 chess.BISHOP: 5,
+                 chess.ROOK: 3,
+                 chess.QUEEN: 6,
+                 chess.KING: 2}
+
+    tuned_weights = {chess.PAWN: 2.746,
+                     chess.KNIGHT: 0.920,
+                     chess.BISHOP: 3.907,
+                     chess.ROOK: 3.050,
+                     chess.QUEEN: 6.185,
+                     chess.KING: 0.953}
+    
+    naive_counter = evaluation.WeightedPieceCount(naive_weights)
+    tuned_counter = evaluation.WeightedPieceCount(tuned_weights)
 
     # softmax = evaluation.SoftmaxEval()
     # a1 = chess_agents.AlphaBetaAgent(color=chess.WHITE, eval_func=counter.evaluate, depth=2, ant_eval_func=counter.evaluate)
     # a2 = chess_agents.AlphaBetaAgent(color=chess.BLACK, eval_func=counter.evaluate, depth=1, ant_eval_func=counter.evaluate)
 
-    multilayer_model = multilayer.Multilayer(10000, 10, 8, 1, vectorize.piece_count_vector)
-    multilayer_model.train()
-    multilayer_eval = evaluation.MultilayerEval(multilayer_model)
+    # multilayer_model = multilayer.Multilayer(10000, 10, 8, 1, vectorize.piece_count_vector)
+    # multilayer_model.train()
+    # multilayer_eval = evaluation.MultilayerEval(multilayer_model)
 
-    a1 = chess_agents.AlphaBetaAgent(color=chess.WHITE, eval_func=multilayer_eval.evaluate, depth=1, ant_eval_func=counter.evaluate)
-    a2 = chess_agents.RandomAgent(color=chess.BLACK, eval_func=counter.evaluate, depth=1, ant_eval_func=multilayer_eval.evaluate)
+    a1 = chess_agents.AlphaBetaAgent(color=chess.WHITE, eval_func=naive_counter.evaluate, depth=1, ant_eval_func=tuned_counter.evaluate)
+    a2 = chess_agents.AlphaBetaAgent(color=chess.BLACK, eval_func=tuned_counter.evaluate, depth=1, ant_eval_func=naive_counter.evaluate)
     board = losing_board.LosingBoard(no_kings=False)
 
     s = StatsGenerator(.05)

@@ -21,12 +21,12 @@ class PieceWeightTrainer:
 		self.temp = 1
 		if starting_weights == None:
 			# tuned weights
-			self.weights = {chess.PAWN: 1,
-							chess.KING: 2,
-							chess.KNIGHT: 3,
-							chess.BISHOP: 5,
-							chess.ROOK: 3,
-							chess.QUEEN: 6}
+			self.weights = {chess.PAWN: 2.746,
+							chess.KNIGHT: 0.920,
+							chess.BISHOP: 3.907,
+							chess.ROOK: 3.050,
+							chess.QUEEN: 6.185,
+							chess.KING: 0.953}
 		else:
 			self.weights = starting_weights
 
@@ -92,7 +92,6 @@ class PieceWeightTrainer:
 		# the final tuned weights
 		self.weights = candidate1
 		return self.weights
-
 
 trainer = PieceWeightTrainer(num_init_successors=6, num_iter=10, num_subseq_successors=8, num_games=8, depth=1, starting_weights=None)
 print trainer.train()		

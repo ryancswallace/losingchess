@@ -7,18 +7,18 @@ Here we'll put our evaluation functions
 """
 
 naive_weights = {chess.PAWN: 1,
-                 chess.KING: 2,
                  chess.KNIGHT: 3,
                  chess.BISHOP: 5,
                  chess.ROOK: 3,
-                 chess.QUEEN: 6}
+                 chess.QUEEN: 6,
+                 chess.KING: 2}
 
-tuned_weights = {chess.PAWN: 1,
-                 chess.KING: 2,
-                 chess.KNIGHT: 3,
-                 chess.BISHOP: 5,
-                 chess.ROOK: 3,
-                 chess.QUEEN: 6}
+tuned_weights = {chess.PAWN: 2.746,
+                 chess.KNIGHT: 0.920,
+                 chess.BISHOP: 3.907,
+                 chess.ROOK: 3.050,
+                 chess.QUEEN: 6.185,
+                 chess.KING: 0.953}
 
 class Evaluator:
     def evaluate(self, game_state, color):
@@ -36,7 +36,7 @@ class WeightedPieceCount(Evaluator):
             tot -= pieces[color][k]*self.weights[k]
 
         return tot
-
+        
 class AntiPawn(Evaluator):
     def evaluate(self, game_state, color):
         return -game_state.piece_counts[color][chess.PAWN]
