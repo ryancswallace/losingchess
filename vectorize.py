@@ -2,7 +2,7 @@ import chess
 import losing_board
 
 
-# this case handles promotions easily
+# vectorization by board squares, currently unused
 def square_vector(board):
     board_type = board.__class__.__name__
     out_vec = []
@@ -54,23 +54,27 @@ def square_vector(board):
     return out_vec
 
 
-# promotions much more difficult here
-# instead of full encoding of promotions, we follow Lai and use piece counts
+# vectorization per piece, adding some more complex positional features
 def piece_vector(board):
     board_type = board.__class__.__name__
     out_vec = []
     piece_types = [chess.PAWN, chess.KNIGHT, chess.BISHOP, chess.ROOK, chess.QUEEN, chess.KING]
+
+    # total numbers of pieces per color
     white_counts = [0] * 6
     black_counts = [0] * 6
 
+    # factoring in support for pieces on the board
     white_attacked = 0
     white_supported = 0
     black_attacked = 0
     black_supported = 0
 
+    # summed pawn distances from the opposing end of the board (how far from promotion?)
     white_pawn_dist = 0
     black_pawn_dist = 0
 
+    # add the squares of each piece on the board
     for ptype in piece_types:
         white_set = board.pieces(ptype, chess.WHITE)
         black_set = board.pieces(ptype, chess.BLACK)
@@ -88,7 +92,6 @@ def piece_vector(board):
             for p_square in white_set:
                 out_vec.append(chess.file_index(p_square) + 1)
                 out_vec.append(chess.rank_index(p_square) + 1)
-                # TODO doesn't handle promotions
                 end_dist = (7 - (chess.rank_index(chess.H8) - chess.rank_index(p_square))) ** 2
                 white_pawn_dist += end_dist
             out_vec += [0] * (16 - len(white_set) * 2)
@@ -98,6 +101,7 @@ def piece_vector(board):
                 end_dist = (7 - (chess.rank_index(p_square) - chess.rank_index(chess.H1))) ** 2
                 black_pawn_dist += end_dist
             out_vec += [0] * (16 - len(black_set) * 2)
+
         elif ptype == chess.KNIGHT:
             if len(white_set) > 2:
                 white_set = list(white_set)[:2]
@@ -114,6 +118,7 @@ def piece_vector(board):
                 out_vec.append(chess.file_index(n_square) + 1)
                 out_vec.append(chess.rank_index(n_square) + 1)
             out_vec += [0] * (4 - len(black_set) * 2)
+
         elif ptype == chess.BISHOP:
             if len(white_set) > 2:
                 white_set = list(white_set)[:2]
@@ -128,6 +133,7 @@ def piece_vector(board):
                 out_vec.append(chess.file_index(b_square) + 1)
                 out_vec.append(chess.rank_index(b_square) + 1)
             out_vec += [0] * (4 - len(black_set) * 2)
+
         elif ptype == chess.ROOK:
             if len(white_set) > 2:
                 white_set = list(white_set)[:2]
@@ -142,6 +148,7 @@ def piece_vector(board):
                 out_vec.append(chess.file_index(r_square) + 1)
                 out_vec.append(chess.rank_index(r_square) + 1)
             out_vec += [0] * (4 - len(black_set) * 2)
+
         elif ptype == chess.QUEEN:
             if len(white_set) > 1:
                 white_set = list(white_set)[:1]
@@ -156,6 +163,7 @@ def piece_vector(board):
                 out_vec.append(chess.file_index(q_square) + 1)
                 out_vec.append(chess.rank_index(q_square) + 1)
             out_vec += [0] * (2 - len(black_set) * 2)
+
         else:
             if len(white_set) > 1:
                 white_set = list(white_set)[:1]
@@ -171,6 +179,7 @@ def piece_vector(board):
                 out_vec.append(chess.rank_index(k_square) + 1)
             out_vec += [0] * (2 - len(black_set) * 2)
 
+        # get piece support numbers
         for square in white_set:
             if board.is_attacked_by(chess.BLACK, square):
                 white_attacked += 1
@@ -208,7 +217,7 @@ def piece_vector(board):
 
     return out_vec
 
-
+# simplified vectorization, only working with piece counts
 def piece_count_vector(board):
     piece_types = [chess.PAWN, chess.KNIGHT, chess.BISHOP, chess.ROOK, chess.QUEEN, chess.KING]
     white_counts = [0] * 6
@@ -226,7 +235,7 @@ def piece_count_vector(board):
     out_vec = white_counts + black_counts
     return out_vec
 
-
+# get the length of a vectorization output for neural network construction
 def get_vector_len(vectorize_method):
     board = losing_board.LosingBoard()
     vec = vectorize_method(board)
