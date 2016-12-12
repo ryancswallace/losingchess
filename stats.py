@@ -13,6 +13,9 @@ from copy import deepcopy
 from scipy.stats import binom
 
 class StatsGenerator:
+	"""
+	Class for running experiments to compare agents with different attributes.
+	"""
 	def __init__(self, sig_level, max_iter=30, null_p=.5, stop_at_significance=False):
 
 		self.sig_level = sig_level
@@ -21,6 +24,10 @@ class StatsGenerator:
 		self.stop_at_significance = stop_at_significance
 
 	def compare_agents(self, a1, a2, board, verbose=False):
+		"""
+		Run 30 games between a1 and a2, randomly assigning color and
+		recording the results of each game.
+		"""
 
 		a1_victory_history = []
 		a1_color_history = []
@@ -58,6 +65,7 @@ class StatsGenerator:
 		self.print_results(a1, a2, a1_victory_history, p_val)
 		return a1, a1_victory_history, p_val
 
+
 	def print_results(self, win_agent, lose_agent, history, p):
 
 		if p > .5:
@@ -81,9 +89,8 @@ if __name__ == "__main__":
 	anti_pawn = evaluation.AntiPawn()
 	counter = evaluation.WeightedPieceCount()
 
-	# softmax = evaluation.SoftmaxEval()
 	a1 = chess_agents.AlphaBetaAgent(color=chess.WHITE, eval_func=counter.evaluate, depth=1, ant_eval_func=anti_pawn.evaluate)
-	a2 = chess_agents.AlphaBetaAgent(color=chess.BLACK, eval_func=anti_pawn.evaluate, depth=0, ant_eval_func=counter.evaluate)
+	a2 = chess_agents.AlphaBetaAgent(color=chess.BLACK, eval_func=anti_pawn.evaluate, depth=1, ant_eval_func=counter.evaluate)
 	board = losing_board.LosingBoard(no_kings=False)
 
 	s = StatsGenerator(.05, max_iter=30)
