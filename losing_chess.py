@@ -12,7 +12,7 @@ agent_choices = {'human': chess_agents.HumanAgent, 'random': chess_agents.Random
 
 eval_choices = {'weighted_count': evaluation.WeightedPieceCount, 'anti_pawn': evaluation.AntiPawn, 
                 'weighted_count_captures': evaluation.WeightedPieceCountWCaptures, 'softmax': evaluation.SoftmaxEval, 
-                'multilayer': evaluation.MultilayerEval, 'TD': evaluation.TDTrainEval, 'none': None}
+                'multilayer': evaluation.MultilayerEval, 'TD': evaluation.TDTrainEval, 'none': None, 'None': None}
 
 # parameters for training the learning methods
 td_parameters = 10, 10, 1, 1, 0.7, 12, False, vectorize.piece_count_vector
@@ -28,11 +28,11 @@ if len(args) != 6:
 try:
     agent_1 = agent_choices[args[0]]
     eval_func_1 = eval_choices[args[1]]
-    depth_1 = int(args[2])
+    depth_1 = 1 if args[2] is None else int(args[2])
 
     agent_2 = agent_choices[args[3]]
     eval_func_2 = eval_choices[args[4]]
-    depth_2 = int(args[5])
+    depth_2 = 1 if args[2] is None else int(args[5])
 except KeyError:
     print 'Invalid option'
     sys.exit()
