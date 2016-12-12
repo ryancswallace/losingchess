@@ -32,7 +32,7 @@ class Multilayer:
             'out': tf.Variable(tf.random_normal([self.n_classes]))
         }
 
-        self.model_path = './pickles/model_10_3_1.ckpt'
+        self.model_path = './pickles/model_2_layer.ckpt'
 
     def multilayer_perceptron(self, x, weights, biases):
         # Hidden layer with RELU activation
@@ -42,7 +42,7 @@ class Multilayer:
         layer_2 = tf.add(tf.matmul(layer_1, weights['h2']), biases['b2'])
         layer_2 = tf.nn.relu(layer_2)
         # Output layer with softmax activation
-        out_layer = tf.nn.softmax(tf.matmul(layer_1, weights['out']) + biases['out'])
+        out_layer = tf.nn.softmax(tf.matmul(layer_2, weights['out']) + biases['out'])
         return out_layer
 
     def train(self):
@@ -85,6 +85,7 @@ class Multilayer:
                 saver.restore(sess, self.model_path)
                 print 'Model restored'
             else:
+                print 'Training model - this could take a while...'
                 # initialize variables
                 sess.run(tf.global_variables_initializer())
 
