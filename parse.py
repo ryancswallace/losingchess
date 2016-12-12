@@ -1,11 +1,11 @@
 import chess.pgn
 import os
 
-"""
-Given a .pgn file, returns a list of chess.pgn.Game objects
-representing the games.
-"""
 def pgn_to_games(pgn_file):
+    """
+    Given a .pgn file, returns a list of chess.pgn.Game objects
+    representing the games.
+    """
     pgn = open(pgn_file)
     games = []
     while True:
@@ -25,6 +25,10 @@ def pgn_to_games(pgn_file):
 
 
 def pgn_to_boards(num_data_sets, labels=False, vectorize_method=None):
+    """
+    Using pgn_to_games, returns a list of boards occurring in the games data.
+    num_data_sets should be <= 9, and .pgns must be in data directory.
+    """
     num_data_sets = min(num_data_sets, 9)
 
     pgn_files = []

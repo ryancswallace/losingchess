@@ -8,10 +8,14 @@ from functools import partial
 from multiprocessing import Pool
 
 class Agent:
+    """
+    Parent class for all agents. Agents must be able to return a move
+    given a game_state
+    """
     def __init__(self, eval_func, ant_eval_func, color=chess.WHITE, depth=1, parallelize=False):
         self.color = color
         self.eval_func = eval_func
-        self.depth = depth
+        self.depth = depth - 1
         self.ant_eval_func = ant_eval_func
         self.parallelize = parallelize
         if self.depth < 0:
@@ -21,6 +25,9 @@ class Agent:
         raise Exception("Undefined!")
 
 class HumanAgent(Agent):
+    """
+    The agent that takes a move from std in
+    """
     def get_move(self, game_state):
         moves = game_state.board.get_legal_moves()
         if len(moves) == 0:
@@ -43,6 +50,9 @@ class HumanAgent(Agent):
                         print 'Invalid move. Try again.'
 
 class RandomAgent(Agent):
+    """
+    Agent that chooses a move uniformly from available moves
+    """
     def get_move(self, game_state):
         moves = game_state.board.get_legal_moves()
         print len(moves)
@@ -51,7 +61,6 @@ class RandomAgent(Agent):
         else:
             move = random.sample(moves, 1)[0]
             return move
-
 
 """
 Necessary code for running a class method in parallel.
@@ -70,6 +79,10 @@ def _pickle_method(m):
 copy_reg.pickle(types.MethodType, _pickle_method)
 
 class MinimaxAgent(Agent):
+    """
+    Agent that returns the minimax optimal move according to the evaluation function
+    (no pruning or parallelization)
+    """
     def get_move(self, game_state, return_value=False):
         """
         Return minimax move using self.depth and self.eval_func.
@@ -151,6 +164,9 @@ class MinimaxAgent(Agent):
             return v
 
 class AlphaBetaAgent(Agent):
+    """
+    Agent that returns the minimax move using alpha-beta pruning
+    """
     def get_move(self, game_state, return_value=False):
         """
         Return minimax move using self.depth, self.eval_func, and alpha-beta pruning.
@@ -194,7 +210,6 @@ class AlphaBetaAgent(Agent):
         """
         Helper function for performing alpha-beta pruning.
         """
-
         # get next game state
         next_state = board.generate_successor(move)
 
@@ -256,10 +271,10 @@ class AlphaBetaAgent(Agent):
             return v
 
 class ExpectimaxAgent(Agent):
+    """
+    Returns the expectimax value according to the evaluation function 
+    """
     def get_move(self, game_state, return_value=False):
-        """
-        Return minimax move using self.depth, self.eval_func, and alpha-beta pruning.
-        """
         moves = game_state.board.get_legal_moves()
         if len(moves) == 0:
             return None

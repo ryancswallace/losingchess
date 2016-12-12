@@ -13,6 +13,11 @@ from operator import add
 
 
 class TDLeafLambda:
+    """
+    NOTE: THIS CLASS IS NON-FUNCTIONAL. SEE COMMENTED ERROR LINE BELOW.
+    Constructs a neural network and attempts to train the network by running 
+    TDLeaf lambda inspired by Lai.   
+    """
     def __init__(self, num_training_iterations, num_sample_games, num_data_sets, learning_rate, lambda_discount, num_training_turns, apply_random_move, vectorize_method):
         # parameters of training
         self.num_training_iterations = num_training_iterations
@@ -107,6 +112,8 @@ class TDLeafLambda:
                     gradient = tf.gradients(evaluator, [x])
 
                     sess = tf.InteractiveSession()
+                    
+                    # THIS LINE FAILS. WE ARE UNABLE TO CALCULATE GRADIENTS.
                     gradient_val = sess.run(gradient, feed_dict={x: np.array(positions_vector[time])})
 
                     total_error = sum(discounted_error_vector[time:(self.num_training_turns)])

@@ -9,6 +9,11 @@ import time
 import seaborn as sns
 import pandas as pd
 
+"""
+Calculates the average total game time for various search functions.
+This script takes multiple hours to run.
+"""
+
 counter = evaluation.WeightedPieceCount()
 
 print '### MINIMAX ###'

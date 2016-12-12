@@ -13,7 +13,6 @@ from copy import deepcopy
 from scipy.stats import binom
 
 class StatsGenerator:
-
 	def __init__(self, sig_level, max_iter=30, null_p=.5, stop_at_significance=False):
 
 		self.sig_level = sig_level

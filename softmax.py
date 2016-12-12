@@ -6,6 +6,9 @@ import numpy as np
 import tensorflow as tf
 
 class Softmax:
+    """
+    Constructs and trains a softmax regression model.
+    """
     def __init__(self, num_training_iterations, num_sample_positions, num_data_sets, learning_rate, vectorize_method):
         # parameters of training
         self.num_training_iterations = num_training_iterations

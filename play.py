@@ -9,6 +9,9 @@ import time
 from copy import deepcopy
 
 def play_game(agent_1, eval_func_1, depth_1, agent_2, eval_func_2, depth_2, td_parameters, softmax_parameters, multilayer_parameters, board=losing_board.LosingBoard(no_kings=False)):
+    """
+    Plays the specified game, printing progress, results and game duration to screen.
+    """
     # agent 1 evaluator
     if eval_func_1 == evaluation.SoftmaxEval:
         model = softmax.Softmax(*softmax_parameters)
@@ -16,7 +19,7 @@ def play_game(agent_1, eval_func_1, depth_1, agent_2, eval_func_2, depth_2, td_p
         evaluator_1 = evaluation.SoftmaxEval(model).evaluate
 
     elif eval_func_1 == evaluation.MultilayerEval:
-        model = multilayer.Mutlilayer(*multilayer_parameters)
+        model = multilayer.Multilayer(*multilayer_parameters)
         model.train()
         evaluator_1 = evaluation.MultilayerEval(model).evaluate
 
