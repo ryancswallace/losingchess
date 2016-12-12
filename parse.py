@@ -10,7 +10,7 @@ def pgn_to_games(pgn_file):
     games = []
     while True:
         try:
-            game = chess.pgn.read_game(pgn)
+            game = chess.pgn.read_game(pgn, chess.pgn.GameModelCreator)
         except ValueError:
             print 'Error parsing. Continuing.'
             break

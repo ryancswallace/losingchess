@@ -6,6 +6,10 @@ import tensorflow as tf
 import os.path
 
 class Multilayer:
+    """
+    Defines the multilayer evaluation function by constructing and training a multilayer
+    neural network.
+    """
     def __init__(self, num_training_iterations, num_sample_positions, num_data_sets, learning_rate, vectorize_method):
         # parameters of training
         self.num_training_iterations = num_training_iterations
@@ -24,7 +28,7 @@ class Multilayer:
         self.W = {
             'h1': tf.Variable(tf.random_normal([self.n_input, self.n_hidden_1])),
             'h2': tf.Variable(tf.random_normal([self.n_hidden_1, self.n_hidden_2])),
-            'out': tf.Variable(tf.random_normal([self.n_hidden_2, self.n_classes]))
+            'out': tf.Variable(tf.random_normal([self.n_hidden_1, self.n_classes]))
         }
         self.b = {
             'b1': tf.Variable(tf.random_normal([self.n_hidden_1])),
@@ -35,17 +39,25 @@ class Multilayer:
         self.model_path = './pickles/model_10_3_1.ckpt'
 
     def multilayer_perceptron(self, x, weights, biases):
+        """
+        Constructs a multilayer neural network using TensorFlow
+        """
         # Hidden layer with RELU activation
         layer_1 = tf.add(tf.matmul(x, weights['h1']), biases['b1'])
         layer_1 = tf.nn.relu(layer_1)
         # Hidden layer with RELU activation
-        layer_2 = tf.add(tf.matmul(layer_1, weights['h2']), biases['b2'])
-        layer_2 = tf.nn.relu(layer_2)
+        # layer_2 = tf.add(tf.matmul(layer_1, weights['h2']), biases['b2'])
+        # layer_2 = tf.nn.relu(layer_2)
         # Output layer with softmax activation
         out_layer = tf.nn.softmax(tf.matmul(layer_1, weights['out']) + biases['out'])
         return out_layer
 
     def train(self):
+        """
+        Trains a neural network using labelled training data and gradient descent.
+        The output layer is three values corresponding to the likelihoods of
+        losing, drawing, or winning.
+        """
         if not os.path.isfile(self.model_path + '.index'):
             # get vectorized, labeled training data
             all_training_boards = parse.pgn_to_boards(self.num_data_sets, labels=True, vectorize_method=self.vectorize_method)

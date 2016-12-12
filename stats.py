@@ -3,12 +3,7 @@ import chess
 import chess_agents
 import evaluation
 import losing_board
-import pickle
-import multilayer
-import vectorize
-import sys
-import StringIO
-import random
+
 from copy import deepcopy
 from scipy.stats import binom
 
@@ -28,11 +23,7 @@ class StatsGenerator:
 		Run 30 games between a1 and a2, randomly assigning color and
 		recording the results of each game.
 		"""
-
 		a1_victory_history = []
-		a1_color_history = []
-
-		order = [a1,a2]
 
 		for i in range(self.max_iter):
 			tmp_board = deepcopy(board)
@@ -49,7 +40,7 @@ class StatsGenerator:
 				a1_victory_history.append(False)
 
 			# check if significance has been reached, excluding true draws (with no winner)
-			no_draws = [g for g in a1_victory_history if g is not None]
+			no_draws = [a for a in a1_victory_history if a is not None]
 			n = len(no_draws)
 			x = sum(no_draws)
 			p_val = binom.cdf(x, n, self.null_p)

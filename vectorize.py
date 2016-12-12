@@ -1,7 +1,6 @@
 import chess
 import losing_board
 
-
 # vectorization by board squares, currently unused
 def square_vector(board):
     board_type = board.__class__.__name__
