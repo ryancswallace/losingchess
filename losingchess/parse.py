@@ -7,7 +7,7 @@ def pgn_to_games(pgn_file):
     representing the games.
     """
     pgn = open(pgn_file)
-    print 'This following is fine (expected behavior).'
+    print 'This following is fine (expected behavior):'
     games = []
     while True:
         try:
